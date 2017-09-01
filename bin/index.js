@@ -5,6 +5,7 @@ const path = require("path");
 const args = require("yargs").argv;
 const prettier = require("prettier");
 const mkdirp = require("mkdirp");
+const { $format } = require("..");
 
 const load = (filepath, otherwise) => {
   let path;
@@ -14,24 +15,27 @@ const load = (filepath, otherwise) => {
   return (path && require(path)) || otherwise || {};
 };
 const cwd = process.cwd();
-const oldConfig = load(path.join(__dirname, "handyman.js"));
-const newConfig = load(path.join(cwd, "handyman.js"));
-const allConfig = Object.assign({}, oldConfig, newConfig);
+const loadedConfig = load(path.join(cwd, "handyman.js"));
 
 function unlinkConfigFile(file) {
   fs.exists(file, exists => exists && fs.unlink(file));
 }
 
-function writeConfigFile(file, conf) {
-  fs.writeFile(file, conf[file](file, conf), () => {});
+function writeConfigFile(file) {
+  const config = loadedConfig[file];
+  const format = config[$format];
+  if (typeof format !== "function") {
+    throw new Error(`Invalid format specified for ${file}.`);
+  }
+  fs.writeFile(file, format({ file, config }), () => {});
 }
 
 function syncConfigFile(file) {
-  if (allConfig[file]) {
-    writeConfigFile(file, allConfig);
+  if (loadedConfig[file]) {
+    writeConfigFile(file);
   } else {
     unlinkConfigFile(file);
   }
 }
 
-Object.keys(allConfig).forEach(syncConfigFile);
+Object.keys(loadedConfig).forEach(syncConfigFile);
