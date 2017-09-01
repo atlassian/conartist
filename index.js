@@ -91,9 +91,8 @@ const config = {
   ),
   ".nvmrc": string(() => "7.9.0"),
   ".travis.yml": string(() => "language: node_js"),
-  "package.json": json(() => {
-    const pkg = require(path.join(process.cwd(), "package.json"));
-    return merge(
+  "package.json": json(({ file }) =>
+    merge(
       {
         dependencies: {
           "@skatejs/bore": "4.0.0",
@@ -143,9 +142,9 @@ const config = {
           postinstall: "handyman"
         }
       },
-      pkg
-    );
-  }),
+      require(path.join(process.cwd(), file))
+    )
+  ),
   "rollup.config.js": js(() => {
     const babel = require("rollup-plugin-babel");
     const uglify = require("rollup-plugin-uglify");
