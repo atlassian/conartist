@@ -15,15 +15,17 @@ const load = (filepath, otherwise) => {
   return (path && require(path)) || otherwise || {};
 };
 const cwd = process.cwd();
-const loadedConfig = load(path.join(cwd, "handyman.js"));
+const loadedConfig = load(path.join(cwd, "conartist.js"));
 
 function unlinkConfigFile(file) {
   fs.exists(file, exists => exists && fs.unlink(file));
 }
 
 function writeConfigFile(file) {
-  const config = loadedConfig[file];
-  const format = config[$format];
+  const config = loadedConfig[file].bind(null, {
+    file: path.join(process.cwd(), file)
+  });
+  const format = loadedConfig[file][$format];
   if (typeof format !== "function") {
     throw new Error(`Invalid format specified for ${file}.`);
   }

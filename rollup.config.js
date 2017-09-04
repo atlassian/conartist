@@ -1,1 +1,1 @@
-module.exports = require("./handyman.js")["rollup.config.js"]();
+module.exports = require("./conartist.js")["rollup.config.js"]();

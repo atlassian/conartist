@@ -41,6 +41,6 @@
     "testEnvironment": "@skatejs/ssr/jest"
   },
   "lint-staged": { "*.(js|json)": ["prettier --write", "git add"] },
-  "scripts": { "postinstall": "handyman" },
-  "name": "handyman"
+  "scripts": { "postinstall": "./bin/index.js" },
+  "name": "conartist"
 }

@@ -10,7 +10,7 @@ const js = createFormat(({ file }) =>
     outdent`
     module.exports = require('./${path.relative(
       cwd,
-      "handyman.js"
+      "conartist.js"
     )}')['${file}']();
   `,
     { parser: "babylon" }
@@ -139,10 +139,10 @@ const config = {
           "*.(js|json)": ["prettier --write", "git add"]
         },
         scripts: {
-          postinstall: "handyman"
+          postinstall: "conartist"
         }
       },
-      require(path.join(process.cwd(), file))
+      require(file)
     )
   ),
   "rollup.config.js": js(() => {
