@@ -7,7 +7,7 @@ Hate managing all your different config files across all your different reposito
 ## Install
 
 ```sh
-npm install [to be decided]
+npm install conartist
 ```
 
 ## Usage
