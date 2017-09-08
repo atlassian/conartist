@@ -87,7 +87,7 @@ module.exports = merge({
     dependencies: {
       'another-dependency': '*'
     }
-  }, config['package.json'].merge(file), input()))
+  }, config['package.json'].data(file), input()))
 }, config);
 ```
 
