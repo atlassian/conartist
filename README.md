@@ -16,18 +16,17 @@ Conartist works off of a single source of truth. This is in the form of a `conar
 
 ```js
 const { json } = require('conartist');
-const { merge } = require('lodash');
 const path = require('path');
 
 module.exports = {
-  '.babelrc': json((file, input) => merge({
+  '.babelrc': json(() => ({
     presets: ['babel-preset-env']
-  }, input())),
-  'package.json': json((file, input) => merge({
+  }, { merge: true })),
+  'package.json': json(() => ({
     dependencies: {
       'babel-preset-env': '*'
     }
-  }, input()));
+  }));
 };
 ```
 
@@ -55,6 +54,8 @@ The `file` argument is the filename you've specified. This is useful if you're n
 
 The `input` argument is a function that will return the existing configuration. You can use this to merge the existing state with whatever you're doing in your formatter.
 
+Formats accept a second argument which is an object that can be used to configure the formatter.
+
 #### `js`
 
 The `js` format allows you to write a configuration using standard JavaScript. The formatter will output a file that points to the JavaScript you've written in your `conartist.js` file, as opposed to trying to stringify it. This means any stuff you use from the outer scope is still available to your config.
@@ -64,6 +65,8 @@ The `js` format allows you to write a configuration using standard JavaScript. T
 #### `json`
 
 The `json` format allows you to return a JavaScript object and it will try and conver it to JSON and write it to the corresponding file. The `input` function will give you a JavaScript object (it simply requires the current JSON file) so you can merge it however you see fit with the object you are returning.
+
+*The `json` formatter merges the existing configuration with the new configuration by default. To turn this off, specify `{ merge: false }`.*
 
 #### `string`
 
@@ -114,11 +117,16 @@ You can write a custom formatter if you need to.
 const { createFormat } = require('conartist');
 
 const myFormat = createFormat(class {
+  get defaultOptions() {
+    return { someValue: true };
+  }
   input(file) {
 
   }
   output(file, merge) {
+    if (this.options.someValue) {
 
+    }
   }
 });
 ```
