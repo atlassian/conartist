@@ -80,6 +80,32 @@ function createFormat(Base) {
 }
 
 const config = {
+  'config/babel.es.js': js(() => {
+    module.exports = {
+      presets: [['env', { es2015: { modules: false } }], 'react', 'stage-0']
+    };
+  }),
+  'config/babel.esnext.js': js(() => {
+    module.exports = {
+      presets: [['env', { es2015: false }], 'react', 'stage-0']
+    };
+  }),
+  'config/babel.node.js': js(() => {
+    module.exports = {
+      presets: [['env', { targets: { node: '7.9' } }], 'react', 'stage-0']
+    };
+  }),
+  'config/babel.umd.js': js(() => {
+    module.exports = {
+      babelrc: false,
+      presets: [
+        ['env', { es2015: { modules: false } }],
+        'es2015-rollup',
+        'react',
+        'stage-0'
+      ]
+    };
+  }),
   '.editorconfig': string(
     () => outdent`
       root = true
@@ -132,46 +158,24 @@ const config = {
   '.nvmrc': string(() => '8.4.0'),
   '.travis.yml': string(() => 'language: node_js'),
   'package.json': json((file, input) => ({
-    dependencies: {
-      '@skatejs/bore': '4.0.0',
-      '@skatejs/ssr': '0.12.2',
-      '@skatejs/val': '0.3.1',
+    devDependencies: {
       'babel-cli': '6.24.1',
       'babel-eslint': '7.2.3',
-      'babel-plugin-modules-map': '1.0.0',
-      'babel-plugin-modules-web-compat': '1.1.1',
       'babel-preset-env': '1.6.0',
       'babel-preset-es2015-rollup': '3.0.0',
-      'babel-preset-latest': '6.24.1',
       'babel-preset-react': '6.24.1',
       'babel-preset-stage-0': '6.24.1',
-      commitizen: '2.9.6',
-      'cz-conventional-changelog': '2.0.0',
       'eslint-plugin-flowtype': '2.34.0',
-      'get-typed': '1.0.0-beta.1',
-      'highlight.js': '9.12.0',
       husky: '0.13.3',
       jest: '20.0.4',
-      lodash: '4.17.4',
       'lint-staged': '4.0.2',
-      nodemon: '1.11.0',
-      outdent: '*',
-      preact: '*',
       rollup: '0.47.4',
       'rollup-plugin-babel': '3.0.2',
       'rollup-plugin-uglify': '2.0.1',
-      'semantic-release': '6.3.2',
-      typescript: '2.3.3',
-      'typescript-formatter': '5.2.0',
-      'validate-commit-msg': '2.12.1',
-      watchman: '0.1.8',
-      yargs: '8.0.1'
+      typescript: '~2.4.0'
     },
     jest: {
-      modulePathIgnorePatterns: ['./node_modules'],
-      setupFiles: ['./test/unit/setup'],
-      setupTestFrameworkScriptFile: './test/unit/setup-each',
-      testEnvironment: '@skatejs/ssr/jest'
+      modulePathIgnorePatterns: ['./node_modules']
     },
     'lint-staged': {
       '*.(js|json)': ['prettier --write', 'git add']
@@ -188,10 +192,7 @@ const config = {
     return {
       dest: `umd/index${args.min ? '.min' : ''}.js`,
       entry: 'src/index.js',
-      external: ['preact'],
       format: 'umd',
-      globals: { preact: 'preact' },
-      moduleName: 'skate',
       plugins: [babel(require('./config/babel.umd'))].concat(
         args.min ? uglify() : []
       ),
