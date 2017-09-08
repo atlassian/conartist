@@ -117,13 +117,23 @@ You can write a custom formatter if you need to.
 const { createFormat } = require('conartist');
 
 const myFormat = createFormat(class {
+  // This is optional and is merged with any options
+  // passed to the format as the second argument:
+  //
+  // myFormat(configFunction, optionsObject)
   get defaultOptions() {
     return { someValue: true };
   }
+
+  // This is optional, too.
   input(file) {
 
   }
+
+  // You're always going to be specifying this
+  // because it is the core of the formatter.
   output(file, merge) {
+    // Options are available as this.options.
     if (this.options.someValue) {
 
     }
@@ -135,4 +145,4 @@ You optionally define an `input()` function that takes the file being handled. I
 
 If you do not define `input()`, or the file does not exist, calling `input()` from your formatter function will return `null`.
 
-The `output()` function is responsible for taking the `file` it's handling and returning the contents of the file that you want to write to disk. The `merge()` function will return the result of your fomatting function and you're responsible for transforming this to a string that can be saved to a file. For example, the `json` format will `JSON.stringify()` the result of this.
+The `output()` function is responsible for taking the `file` it's handling and returning the contents of the file that you want to write to disk. The `merge()` function will return the result of your formatting function and you're responsible for transforming this to a string that can be saved to a file. For example, the `json` format will `JSON.stringify()` the result of this.
