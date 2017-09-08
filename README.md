@@ -44,7 +44,7 @@ Formats are used by calling the format as a function and passing it a function t
 const { js } = require('conartist');
 
 module.exports = {
-  'package.json': js((file, input) => {
+  'package.json': json((file, input) => {
 
   })
 };
