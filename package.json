@@ -35,24 +35,13 @@
     "yargs": "8.0.1"
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-each",
     "testEnvironment": "@skatejs/ssr/jest"
   },
-  "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "scripts": {
-    "postinstall": "conartist"
-  },
+  "lint-staged": { "*.(js|json)": ["prettier --write", "git add"] },
+  "scripts": { "postinstall": "conartist" },
   "name": "conartist",
   "version": "0.0.1"
 }
