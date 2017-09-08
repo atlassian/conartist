@@ -17,10 +17,14 @@ const cwd = process.cwd();
 const loadedConfig = load(path.join(cwd, 'conartist.js'));
 
 function unlinkConfigFile(file) {
-  fs.exists(file, exists => exists && fs.unlink(file));
+  fs.exists(file, exists => exists && fs.unlink(file, () => {}));
 }
 
 function writeConfigFile(file) {
+  const dirname = path.dirname(file);
+  if (dirname) {
+    mkdirp(dirname);
+  }
   fs.writeFile(file, loadedConfig[file].output(file), () => {});
 }
 

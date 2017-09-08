@@ -1,6 +1,10 @@
 const { config, json } = require('.');
 
-module.exports = Object.assign({}, config, {
+module.exports = {
+  '.editorconfig': config['.editorconfig'],
+  '.gitignore': config['.gitignore'],
+  '.nvmrc': config['.nvmrc'],
+  '.travis.yml': config['.travis.yml'],
   'package.json': json(() =>
     Object.assign({}, config['package.json'].data('package.json'), {
       dependencies: {
@@ -14,4 +18,4 @@ module.exports = Object.assign({}, config, {
       devDependencies: null
     })
   )
-});
+};
