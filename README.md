@@ -101,7 +101,7 @@ You can also opt-out of using a part of a base config by overriding the config v
 const baseConfig = {
   '.babelrc': json(() => ({})),
 };
-const userConfig = merge({
+const userConfig = Object.assign({
   '.babelrc': null,
   'tsconfig.json': json(() => ({}))
 }, baseConfig);
