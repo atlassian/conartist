@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const args = require("yargs").argv;
-const prettier = require("prettier");
-const mkdirp = require("mkdirp");
-const { $format } = require("..");
+const fs = require('fs');
+const path = require('path');
+const args = require('yargs').argv;
+const prettier = require('prettier');
+const mkdirp = require('mkdirp');
 
 const load = (filepath, otherwise) => {
   let path;
@@ -15,21 +14,14 @@ const load = (filepath, otherwise) => {
   return (path && require(path)) || otherwise || {};
 };
 const cwd = process.cwd();
-const loadedConfig = load(path.join(cwd, "conartist.js"));
+const loadedConfig = load(path.join(cwd, 'conartist.js'));
 
 function unlinkConfigFile(file) {
   fs.exists(file, exists => exists && fs.unlink(file));
 }
 
 function writeConfigFile(file) {
-  const config = loadedConfig[file].bind(null, {
-    file: path.join(process.cwd(), file)
-  });
-  const format = loadedConfig[file][$format];
-  if (typeof format !== "function") {
-    throw new Error(`Invalid format specified for ${file}.`);
-  }
-  fs.writeFile(file, format({ file, config }), () => {});
+  fs.writeFile(file, loadedConfig[file].output(file), () => {});
 }
 
 function syncConfigFile(file) {
