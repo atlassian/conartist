@@ -105,7 +105,7 @@ Conartist ships with a few built-in presets. You can import these using `require
 
 ### Custom handlers
 
-Custom handlers are specified by simply modifying the `hanlders` object.
+Custom handlers are specified by simply modifying the `handlers` object.
 
 ```js
 const { handlers } = require('conartist');
