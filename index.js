@@ -24,9 +24,7 @@ function js(data, file) {
     .join('');
   return prettierFormat(
     outdent`
-      const fs = require('fs');
-      const key = '${file}';
-      module.exports = require('${upPaths}./conartist.js')[key].data();
+      module.exports = require('${upPaths}./conartist.js')['${file}'].data();
     `
   );
 }
