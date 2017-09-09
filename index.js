@@ -16,11 +16,16 @@ function prettierFormat(code, opts) {
 const js = createFormat(
   class {
     output({ file }) {
+      const upPaths = path
+        .dirname(file)
+        .split('/')
+        .map(() => '../')
+        .join('');
       return prettierFormat(
         outdent`
           const fs = require('fs');
           const key = '${file}';
-          module.exports = require('./conartist.js')[key].data(key);
+          module.exports = require('${upPaths}./conartist.js')[key].data(key);
         `
       );
     }
