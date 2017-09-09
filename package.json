@@ -1,4 +1,18 @@
 {
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "husky": "^0.13.3",
+    "jest": "^20.0.4",
+    "lint-staged": "^4.0.2",
+    "rollup": "^0.47.4",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-uglify": "^2.0.1"
+  },
   "jest": { "modulePathIgnorePatterns": ["./node_modules"] },
   "lint-staged": { "*.(js|json)": ["prettier --write", "git add"] },
   "name": "conartist",
