@@ -61,7 +61,7 @@ module.exports = config(babel, base, {
 
 #### `string`
 
-The `string` handler to provide a string and it will write it as-is to the file. If the file already exists, it's content is used instead. This ensures that no changes you make are lost.
+The `string` handler allows you to provide a string and it will write it as-is to the file. If the file already exists, it's content is used instead. This ensures that no changes you make are lost.
 
 ```js
 const { config } = require('conartist');
