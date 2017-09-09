@@ -1,24 +1,11 @@
 {
+  "devDependencies": { "jest": "^20.0.4" },
+  "jest": { "modulePathIgnorePatterns": ["./node_modules"] },
+  "scripts": { "test": "jest", "postinstall": "conartist" },
   "version": "0.3.0",
-  "devDependencies": {
-    "jest": "^20.0.4"
-  },
-  "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ]
-  },
-  "scripts": {
-    "test": "jest",
-    "postinstall": "conartist"
-  },
-  "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
-  },
+  "lint-staged": { "*.(js|json)": ["prettier --write", "git add"] },
   "name": "conartist",
+  "main": "./src/index.js",
   "dependencies": {
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
