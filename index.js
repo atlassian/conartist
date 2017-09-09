@@ -54,7 +54,6 @@ class Format {
 const handlers = {
   '*.js': js,
   '*.json': json,
-  '.*': string,
   '*': string
 };
 
