@@ -35,8 +35,9 @@ function json(data) {
   });
 }
 
-function string(data) {
-  return `${data}`;
+function string(data, file) {
+  const filepath = path.join(process.cwd(), file);
+  return `${fs.existsSync(filepath) ? fs.readFileSync(filepath) : data}`;
 }
 
 class Format {
