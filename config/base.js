@@ -31,8 +31,5 @@ module.exports = {
     `
   ),
   '.nvmrc': string(() => process.version),
-  '.travis.yml': string(() => 'language: node_js'),
-  'package.json': json(() => ({
-    name: path.basename(process.cwd())
-  }))
+  '.travis.yml': string(() => 'language: node_js')
 };
