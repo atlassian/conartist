@@ -1,11 +1,10 @@
-const { json } = require('..');
 module.exports = {
-  'package.json': json(() => ({
+  'package.json': {
     devDependencies: {
       typescript: '~2.5.0'
     }
-  })),
-  'tsconfig.json': json(() => ({
+  },
+  'tsconfig.json': {
     compilerOptions: {
       module: 'es2015',
       target: 'es2017',
@@ -21,5 +20,5 @@ module.exports = {
     },
     include: ['src/index.ts'],
     exclude: ['node_modules']
-  }))
+  }
 };

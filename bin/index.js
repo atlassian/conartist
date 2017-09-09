@@ -25,7 +25,7 @@ function writeConfigFile(file) {
   if (dirname) {
     mkdirp(dirname);
   }
-  fs.writeFile(file, loadedConfig[file].output(file), () => {});
+  fs.writeFile(file, loadedConfig[file].process(), () => {});
 }
 
 function syncConfigFile(file) {

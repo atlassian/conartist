@@ -1,6 +1,5 @@
-const { js } = require('..');
 module.exports = {
-  'config/babel.umd.js': js(() => {
+  'config/babel.umd.js': () => {
     module.exports = {
       babelrc: false,
       presets: [
@@ -10,8 +9,8 @@ module.exports = {
         'stage-0'
       ]
     };
-  }),
-  'package.json': json(() => ({
+  },
+  'package.json': {
     devDependencies: {
       'babel-preset-es2015-rollup': '^3.0.0',
       rollup: '^0.47.4',
@@ -21,8 +20,8 @@ module.exports = {
     scripts: {
       'build:umd': 'rollup -c && rollup -c --min'
     }
-  })),
-  'rollup.config.js': js(() => {
+  },
+  'rollup.config.js': () => {
     const babel = require('rollup-plugin-babel');
     const uglify = require('rollup-plugin-uglify');
     const yargs = require('yargs');
@@ -36,5 +35,5 @@ module.exports = {
       ),
       sourceMap: true
     };
-  })
+  }
 };

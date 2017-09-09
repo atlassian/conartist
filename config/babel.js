@@ -1,15 +1,15 @@
 module.exports = {
-  'config/babel.es.js': js(() => {
+  'config/babel.es.js': () => {
     module.exports = {
       presets: [['env', { es2015: { modules: false } }], 'react', 'stage-0']
     };
-  }),
-  'config/babel.esnext.js': js(() => {
+  },
+  'config/babel.esnext.js': () => {
     module.exports = {
       presets: [['env', { es2015: false }], 'react', 'stage-0']
     };
-  }),
-  'config/babel.node.js': js(() => {
+  },
+  'config/babel.node.js': () => {
     module.exports = {
       presets: [
         ['env', { targets: { node: process.version } }],
@@ -17,8 +17,8 @@ module.exports = {
         'stage-0'
       ]
     };
-  }),
-  'package.json': json(() => ({
+  },
+  'package.json': {
     devDependencies: {
       'babel-cli': '^6.24.1',
       'babel-eslint': '^7.2.3',
@@ -34,5 +34,5 @@ module.exports = {
       'build:node':
         'babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node'
     }
-  }))
+  }
 };

@@ -1,6 +1,5 @@
-const { json } = require('..');
 module.exports = {
-  'package.json': json(() => ({
+  'package.json': {
     devDependencies: {
       husky: '^0.13.3',
       'lint-staged': '^4.0.2'
@@ -8,5 +7,5 @@ module.exports = {
     'lint-staged': {
       '*.(js|json)': ['prettier --write', 'git add']
     }
-  }))
+  }
 };

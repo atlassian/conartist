@@ -1,5 +1,5 @@
 module.exports = {
-  'package.json': json(() => ({
+  'package.json': {
     devDependencies: {
       jest: '^20.0.4'
     },
@@ -9,5 +9,5 @@ module.exports = {
     scripts: {
       test: 'jest'
     }
-  }))
+  }
 };

@@ -1,7 +1,20 @@
 {
+  "devDependencies": { "jest": "^20.0.4" },
   "jest": { "modulePathIgnorePatterns": ["./node_modules"] },
+  "scripts": { "test": "jest", "postinstall": "conartist" },
   "lint-staged": { "*.(js|json)": ["prettier --write", "git add"] },
   "name": "conartist",
-  "scripts": { "postinstall": "conartist" },
-  "dependencies": { "outdent": "0.3.0", "prettier": "1.6.1", "yargs": "^8.0.2" }
+  "dependencies": {
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "mkdirp": "^0.5.1",
+    "outdent": "^0.3.0",
+    "prettier": "^1.6.1",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-uglify": "^2.0.1",
+    "username": "^3.0.0",
+    "yargs": "^8.0.2"
+  }
 }
