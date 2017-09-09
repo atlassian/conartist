@@ -73,7 +73,7 @@ module.exports = config({
 
 ### Presets
 
-Conartist ships with a few built-in presets.
+Conartist ships with a few built-in presets. You can import these using `require('conartist/config')`.
 
 #### `babel`
 
