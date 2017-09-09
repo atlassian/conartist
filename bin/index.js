@@ -20,12 +20,12 @@ function unlinkConfigFile(file) {
   fs.exists(file, exists => exists && fs.unlink(file, () => {}));
 }
 
-function writeConfigFile(file) {
+async function writeConfigFile(file) {
   const dirname = path.dirname(file);
   if (dirname) {
     mkdirp(dirname);
   }
-  fs.writeFile(file, loadedConfig[file].process(), () => {});
+  fs.writeFile(file, await loadedConfig[file].process(), () => {});
 }
 
 function syncConfigFile(file) {

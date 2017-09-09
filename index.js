@@ -29,7 +29,11 @@ function js(data, file) {
   );
 }
 
-function json(data) {
+function json(data, file) {
+  const filepath = path.join(process.cwd(), file);
+  if (fs.existsSync(filepath)) {
+    data = merge(data, require(filepath));
+  }
   return prettierFormat(JSON.stringify(data), {
     parser: 'json'
   });
@@ -52,6 +56,8 @@ class Format {
 }
 
 const handlers = {
+  '.babelrc': json,
+  '.eslintrc': json,
   '*.js': js,
   '*.json': json,
   '*': string
