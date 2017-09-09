@@ -1,27 +1,22 @@
-const { merge } = require('lodash');
-const fs = require('fs');
-const minimatch = require('minimatch');
-const outdent = require('outdent');
-const path = require('path');
-const prettier = require('prettier');
-const yargs = require('yargs');
-
-const cli = yargs.argv;
-const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const { merge } = require("lodash");
+const fs = require("fs");
+const outdent = require("outdent");
+const path = require("path");
+const prettier = require("prettier");
 
 function prettierFormat(code, opts) {
   return prettier.format(
     code,
-    Object.assign({}, { parser: 'babylon', singleQuote: true }, opts)
+    Object.assign({}, { parser: "babylon", singleQuote: true }, opts)
   );
 }
 
 function js(data, file) {
   const upPaths = path
     .dirname(file)
-    .split('/')
-    .map(() => '../')
-    .join('');
+    .split("/")
+    .map(() => "../")
+    .join("");
   return prettierFormat(
     outdent`
       module.exports = require('${upPaths}./conartist.js')['${file}'].data();
@@ -35,7 +30,7 @@ function json(data, file) {
     data = merge(data, require(filepath));
   }
   return prettierFormat(JSON.stringify(data), {
-    parser: 'json'
+    parser: "json"
   });
 }
 
@@ -55,39 +50,43 @@ class Format {
   }
 }
 
-const handlers = {
-  '.babelrc': json,
-  '.eslintrc': json,
-  '*.js': js,
-  '*.json': json,
-  '*': string
-};
+function defaultHandler(key, val) {
+  const type = typeof val;
+  if (type === 'function') return js;
+  if (type === 'object') return json;
+  if (type === 'string') return string;
+
+  const extname = path.extname(key);
+  if (extname === '.js') return js;
+  if (extname === '.json') return json;
+
+  const basename = path.basename(key);
+  if (basename === '.babelrc') return json;
+  if (basename === '.eslintrc') return json;
+
+  return string;
+}
 
 function config(...args) {
   const obj = merge(...args);
-  for (const key in obj) {
-    if (has(obj, key)) {
-      obj[key] = new Format(key, obj[key], locateHandler(key));
-    }
-  }
+  Object.keys(obj).forEach(key => {
+    obj[key] = new Format(key, obj[key], locateHandler(key, obj));
+  });
   return obj;
 }
 
-const minimatchOptions = {
-  dot: true,
-  matchBase: true
-};
+const handlers = [ defaultHandlerLocator ];
 
-function locateHandler(key) {
-  for (const pattern in handlers) {
-    if (has(handlers, pattern) && minimatch(key, pattern, minimatchOptions)) {
-      return handlers[pattern];
-    }
-  }
-  throw new Error(`Could not find a handler for "${key}".`);
+function locateHandler(key, obj) {
+  let handler;
+  handlers.some(locate => (handler = locate(key, obj[key], obj)));
+  return handler || throw new Error(`Could not find a handler for "${key}".`);
 }
 
 module.exports = {
   config,
-  handlers
+  handlers,
+  js,
+  json,
+  string
 };

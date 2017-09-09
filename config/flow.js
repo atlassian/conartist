@@ -1,6 +1,6 @@
-const outdent = require('outdent');
-module.exports = {
-  '.flowconfig': outdent`
+const outdent = require("outdent");
+module.exports = () => ({
+  ".flowconfig": outdent`
     [ignore]
     .*/\..*
     .*/docs/.*
@@ -19,9 +19,9 @@ module.exports = {
     [options]
     unsafe.enable_getters_and_setters=true
   `,
-  'package.json': {
+  "package.json": {
     devDependencies: {
-      'eslint-plugin-flowtype': '^2.34.0'
+      "eslint-plugin-flowtype": "^2.34.0"
     }
   }
-};
+});

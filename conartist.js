@@ -1,4 +1,4 @@
-const { config } = require('.');
-const { base, jest } = require('./config');
+const { config } = require(".");
+const { base, jest } = require("./config");
 
-module.exports = config(base, jest);
+module.exports = config(base(), jest());

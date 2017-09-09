@@ -1,7 +1,7 @@
-const outdent = require('outdent');
-const username = require('username');
-module.exports = {
-  '.editorconfig': outdent`
+const outdent = require("outdent");
+const username = require("username");
+module.exports = ({ name, node } = {}) => ({
+  ".editorconfig": outdent`
     root = true
 
     [*]
@@ -12,7 +12,7 @@ module.exports = {
     trim_trailing_whitespace = true
     insert_final_newline = true
   `,
-  '.gitignore': outdent`
+  ".gitignore": outdent`
     /coverage
     /demo/dist
     /es
@@ -25,12 +25,12 @@ module.exports = {
     /umd
     npm-debug.log*
   `,
-  '.nvmrc': process.version,
-  '.travis.yml': 'language: node_js',
+  ".nvmrc": node || process.version,
+  ".travis.yml": "language: node_js",
   LICENSE: outdent`
     MIT License
 
-    Copyright (c) 2017 ${username.sync()}
+    Copyright (c) 2017 ${name || username.sync()}
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -50,4 +50,4 @@ module.exports = {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
   `
-};
+});

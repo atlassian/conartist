@@ -1,13 +1,13 @@
-module.exports = {
-  'package.json': {
+module.exports = () => ({
+  "package.json": {
     devDependencies: {
-      jest: '^20.0.4'
+      jest: "^20.0.4"
     },
     jest: {
-      modulePathIgnorePatterns: ['./node_modules']
+      modulePathIgnorePatterns: ["./node_modules"]
     },
     scripts: {
-      test: 'jest'
+      test: "jest"
     }
   }
-};
+});
