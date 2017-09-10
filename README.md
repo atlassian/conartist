@@ -71,48 +71,147 @@ module.exports = config({
 });
 ```
 
+#### Custom handler
+
+A custom handler is just a function that takes two arguments and returns a string.
+
+```js
+function customHandler (configValue, fileName) {
+  // Return the new file contents as a string.
+}
+```
+
+You can then use the custom handler by overriding the default handler locator so that you can map the handler to a file.
+
+```js
+const { getHandlerLocator, setHandlerLocator } = require('conartist');
+
+const currentHandlerLocator = getHandlerLocator();
+
+setHandlerLocator(function(fileName, configValue) {
+  const handler = currentHandlerLocator(fileName, configValue);
+
+  if (handler) {
+    return handler;
+  }
+
+  if (fileName === 'custom-file-type') {
+    return customHandler;
+  }
+});
+```
+
+For more information on handler locators, see the section below.
+
+#### Default handler locator
+
+The default handler works something like the following:
+
+```js
+const { setHandlerLocator, js, json, string } = require('conartist');
+
+setHandlerLocator(function (fileName, configValue) {
+  const type = typeof configValue;
+  if (type === 'function') return js;
+  if (type === 'object') return json;
+  if (type === 'string') return string;
+
+  const extname = path.extname(fileName);
+  if (extname === '.js') return js;
+  if (extname === '.json') return json;
+
+  const basename = path.basename(fileName);
+  if (basename === '.babelrc') return json;
+  if (basename === '.eslintrc') return json;
+});
+```
+
+#### Custom handler locator
+
+You can define a custom handler by calling `setHandlerLocator`:
+
+```js
+const { getHandlerLocator, setHandlerLocator } = require('conartist');
+
+// If you want to reuse the existing handler locator.
+const currentHandlerLocator = getHandlerLocator();
+
+setHandlerLocator(function (fileName, configValue) {
+  // Do your resolution here.
+});
+```
+
 ### Presets
 
 Conartist ships with a few built-in presets. You can import these using `require('conartist/config')`.
 
 #### `babel`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { babel } = require('conartist/preset');
+
+module.exports = config(babel());
+```
 
 #### `base`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { base } = require('conartist/preset');
+
+module.exports = config(base({
+  // Your name to use in the LICENSE file.
+  // Defaults to the current username.
+  name: 'Trey Shugart',
+
+  // The node version that should be used in the .nvmrc file.
+  // Defaults to the current Node version.
+  node: '8.4.0'
+}));
+```
 
 #### `flow`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { flow } = require('conartist/preset');
+
+module.exports = config(flow());
+```
 
 #### `husky`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { husky } = require('conartist/preset');
+
+module.exports = config(husky());
+```
 
 #### `jest`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { jest } = require('conartist/preset');
+
+module.exports = config(jest());
+```
 
 #### `rollup`
 
-[TBD]
+```js
+const { config } = require('conartist');
+const { rollup } = require('conartist/preset');
+
+module.exports = config(rollup());
+```
 
 #### `typescript`
 
-[TBD]
-
-### Custom handlers
-
-Custom handlers are specified by simply modifying the `handlers` object.
-
 ```js
-const { handlers } = require('conartist');
+const { config } = require('conartist');
+const { typescript } = require('conartist/preset');
 
-handlers['*.yml'] = function handleYml(data, file) {};
+module.exports = config(typescript());
 ```
-
-The `data` argument is the content that was passed as the configuration for the specific `file`. The `file` argument is the configuration key that was passed. If you need to get contents of an existing file you can use `process.cwd()` along with `file` to get it.
-
-You can return a straight value, use `async / await` or return a `Promise` from your handler.
