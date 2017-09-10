@@ -5,14 +5,10 @@ const outdent = require('outdent');
 const path = require('path');
 
 function js(data, file) {
-  const upPaths = path
-    .dirname(file)
-    .split('/')
-    .map(() => '../')
-    .join('');
+  const conartistPath = path.relative(path.dirname(file), './conartist.js');
   return prettierFormat(
     outdent`
-      module.exports = require('${upPaths}./conartist.js')['${file}'].data();
+      module.exports = require('./${conartistPath}')['${file}'].data();
     `
   );
 }
