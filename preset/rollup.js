@@ -1,20 +1,15 @@
 const path = require('path');
 module.exports = () => ({
   'config/babel.umd.js': () => {
-    module.exports = {
+    return {
       babelrc: false,
-      presets: [
-        ['env', { es2015: { modules: false } }],
-        'es2015-rollup',
-        'react',
-        'stage-0'
-      ]
+      presets: [['env', { modules: false }], 'react', 'stage-0']
     };
   },
   'package.json': {
     devDependencies: {
       'babel-preset-es2015-rollup': '^3.0.0',
-      rollup: '^0.47.4',
+      rollup: '^0.49.3',
       'rollup-plugin-babel': '^3.0.2',
       'rollup-plugin-uglify': '^2.0.1'
     },
@@ -29,11 +24,13 @@ module.exports = () => ({
     const yargs = require('yargs');
     const { min } = yargs.argv;
     return {
-      dest: `umd/index${min ? '.min' : ''}.js`,
-      entry: 'src/index.js',
-      format: 'umd',
+      input: 'src/index.js',
+      output: {
+        file: `umd/index${min ? '.min' : ''}.js`,
+        format: 'umd'
+      },
       plugins: [babel(babelConfig)].concat(min ? uglify() : []),
-      sourceMap: true
+      sourcemap: true
     };
   }
 });

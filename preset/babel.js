@@ -1,7 +1,7 @@
 module.exports = () => ({
   'config/babel.es.js': () => {
     return {
-      presets: [['env', { es2015: { modules: false } }], 'react', 'stage-0']
+      presets: [['env', { modules: false }], 'react', 'stage-0']
     };
   },
   'config/babel.esnext.js': () => {
