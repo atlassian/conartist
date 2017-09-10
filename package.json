@@ -9,7 +9,10 @@
   },
   "scripts": {
     "test": "jest",
-    "postinstall": "conartist"
+    "postinstall": "bin/conartist.js"
+  },
+  "bin": {
+    "conartist": "bin/conartist.js"
   },
   "version": "0.6.1",
   "lint-staged": {
