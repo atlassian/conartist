@@ -1,24 +1,24 @@
 module.exports = () => ({
-  "package.json": {
+  'package.json': {
     devDependencies: {
-      typescript: "~2.5.0"
+      typescript: '~2.5.0'
     }
   },
-  "tsconfig.json": {
+  'tsconfig.json': {
     compilerOptions: {
-      module: "es2015",
-      target: "es2017",
-      lib: ["dom", "es2017"],
-      baseUrl: "./",
+      module: 'es2015',
+      target: 'es2017',
+      lib: ['dom', 'es2017'],
+      baseUrl: './',
       strict: true,
       sourceMap: true,
-      moduleResolution: "node",
+      moduleResolution: 'node',
       declaration: true,
-      jsx: "react",
+      jsx: 'react',
       pretty: true,
-      outDir: "dist"
+      outDir: 'dist'
     },
-    include: ["src/index.ts"],
-    exclude: ["node_modules"]
+    include: ['src/index.ts'],
+    exclude: ['node_modules']
   }
 });
