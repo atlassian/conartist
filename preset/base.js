@@ -1,7 +1,10 @@
-const outdent = require("outdent");
-const username = require("username");
+const outdent = require('outdent');
+const username = require('username');
 module.exports = ({ name, node } = {}) => ({
-  ".editorconfig": outdent`
+  'src/index.js': outdent`
+    // This is the main entry point.
+  `,
+  '.editorconfig': outdent`
     root = true
 
     [*]
@@ -12,7 +15,7 @@ module.exports = ({ name, node } = {}) => ({
     trim_trailing_whitespace = true
     insert_final_newline = true
   `,
-  ".gitignore": outdent`
+  '.gitignore': outdent`
     /coverage
     /demo/dist
     /es
@@ -25,8 +28,8 @@ module.exports = ({ name, node } = {}) => ({
     /umd
     npm-debug.log*
   `,
-  ".nvmrc": node || process.version,
-  ".travis.yml": "language: node_js",
+  '.nvmrc': node || process.version,
+  '.travis.yml': 'language: node_js',
   LICENSE: outdent`
     MIT License
 
