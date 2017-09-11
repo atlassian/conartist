@@ -1,5 +1,7 @@
 const outdent = require('outdent');
+const path = require('path');
 const username = require('username');
+
 module.exports = ({ name, node } = {}) => ({
   'src/index.js': outdent`
     // This is the main entry point.

@@ -2,38 +2,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const args = require('yargs').argv;
-const prettier = require('prettier');
-const mkdirp = require('mkdirp');
+const yargs = require('yargs');
 
-const load = (filepath, otherwise) => {
-  let path;
-  try {
-    path = require.resolve(filepath);
-  } catch (e) {}
-  return (path && require(path)) || otherwise || {};
-};
-const cwd = process.cwd();
-const loadedConfig = load(path.join(cwd, 'conartist.js'));
+const { argv } = yargs;
+const cmd = path.join(...argv._);
 
-function unlinkConfigFile(file) {
-  fs.exists(file, exists => exists && fs.unlink(file, () => {}));
+if (fs.existsSync(path.join(__dirname, `${cmd}.js`))) {
+  require(`./${cmd}`)(argv);
+} else {
+  throw new Error(`Command not found: ${cmd}`);
 }
-
-async function writeConfigFile(file) {
-  const dirname = path.dirname(file);
-  if (dirname) {
-    mkdirp(dirname);
-  }
-  fs.writeFile(file, await loadedConfig[file].process(), () => {});
-}
-
-function syncConfigFile(file) {
-  if (loadedConfig[file]) {
-    writeConfigFile(file);
-  } else {
-    unlinkConfigFile(file);
-  }
-}
-
-Object.keys(loadedConfig).forEach(syncConfigFile);

@@ -7,7 +7,19 @@ Hate managing all your different config files across all your different reposito
 ## Install
 
 ```sh
-npm install conartist
+npm install conartist --save-dev
+```
+
+To initialise a base configuration, run:
+
+```sh
+conartist init
+```
+
+To scaffold out your files, or to keep them in sync, run:
+
+```sh
+conartist sync
 ```
 
 ## Usage
@@ -52,7 +64,7 @@ The `json` handler takes an object and merges it with other like objects, recurs
 
 ```js
 const { config } = require('conartist');
-const { babel, base } = require('conartist/config');
+const { babel, base } = require('conartist/preset');
 
 module.exports = config(babel, base, {
   'package.json': {}
@@ -143,7 +155,7 @@ setHandlerLocator(function (fileName, configValue) {
 
 ### Presets
 
-Conartist ships with a few built-in presets. You can import these using `require('conartist/config')`.
+Conartist ships with a few built-in presets. You can import these using `require('conartist/preset')`.
 
 #### `babel`
 

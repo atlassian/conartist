@@ -1,30 +1,18 @@
 {
-  "devDependencies": {
-    "jest": "^20.0.4"
-  },
-  "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ]
-  },
-  "scripts": {
-    "test": "jest",
-    "postinstall": "conartist"
-  },
-  "version": "0.6.1",
-  "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
-  },
+  "devDependencies": { "jest": "^20.0.4" },
+  "jest": { "modulePathIgnorePatterns": ["./node_modules"] },
+  "scripts": { "test": "jest" },
   "name": "conartist",
+  "description": "Keep all of your build configs in sync.",
+  "version": "0.6.1",
   "main": "./src/index.js",
+  "bin": { "conartist": "./bin/index.js" },
   "dependencies": {
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "outdent": "^0.3.0",
     "prettier": "^1.6.1",
@@ -32,5 +20,13 @@
     "rollup-plugin-uglify": "^2.0.1",
     "username": "^3.0.0",
     "yargs": "^8.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/treshugart/conartist.git"
+  },
+  "author": "Trey Shugart <treshugart@gmail.com>",
+  "license": "MIT",
+  "bugs": { "url": "https://github.com/treshugart/conartist/issues" },
+  "homepage": "https://github.com/treshugart/conartist#readme"
 }
