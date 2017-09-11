@@ -5,7 +5,7 @@ const path = require('path');
 const yargs = require('yargs');
 
 const { argv } = yargs;
-const cmd = path.join(...argv._);
+const cmd = argv._.join(path.delimiter) || 'sync';
 
 if (fs.existsSync(path.join(__dirname, `${cmd}.js`))) {
   require(`./${cmd}`)(argv);
