@@ -1,12 +1,22 @@
 {
-  "devDependencies": { "jest": "^20.0.4" },
-  "jest": { "modulePathIgnorePatterns": ["./node_modules"] },
-  "scripts": { "test": "jest" },
+  "devDependencies": {
+    "jest": "^20.0.4"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ]
+  },
+  "scripts": {
+    "test": "jest"
+  },
   "name": "conartist",
   "description": "Keep all of your build configs in sync.",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "main": "./src/index.js",
-  "bin": { "conartist": "./bin/index.js" },
+  "bin": {
+    "conartist": "./bin/index.js"
+  },
   "dependencies": {
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
@@ -27,6 +37,8 @@
   },
   "author": "Trey Shugart <treshugart@gmail.com>",
   "license": "MIT",
-  "bugs": { "url": "https://github.com/treshugart/conartist/issues" },
+  "bugs": {
+    "url": "https://github.com/treshugart/conartist/issues"
+  },
   "homepage": "https://github.com/treshugart/conartist#readme"
 }
