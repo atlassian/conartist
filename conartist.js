@@ -1,4 +1,4 @@
-const { config } = require('./src');
-const { base, jest } = require('./preset');
+const { config } = require('.');
+const { base } = require('./preset');
 
-module.exports = config(base(), jest());
+module.exports = config(base());
