@@ -63,10 +63,9 @@ module.exports = config({
 The `json` handler takes an object and merges it with other like objects, recursively. If there is a configuration file by the same name in the current working directory, it is merged with the configuration and takes precedence over other configs.
 
 ```js
-const { config } = require('conartist');
-const { babel, base } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(babel, base, {
+module.exports = config(preset.babel(), preset.base(), {
   'package.json': {}
 });
 ```
@@ -155,24 +154,22 @@ setHandlerLocator(function (fileName, configValue) {
 
 ### Presets
 
-Conartist ships with a few built-in presets. You can import these using `require('conartist/node/preset')`.
+Conartist ships with a few built-in presets.
 
 #### `babel`
 
 ```js
-const { config } = require('conartist');
-const { babel } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(babel());
+module.exports = config(preset.babel());
 ```
 
 #### `base`
 
 ```js
-const { config } = require('conartist');
-const { base } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(base({
+module.exports = config(preset.base({
   // Your name to use in the LICENSE file.
   // Defaults to the current username.
   name: 'Trey Shugart',
@@ -186,44 +183,39 @@ module.exports = config(base({
 #### `flow`
 
 ```js
-const { config } = require('conartist');
-const { flow } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(flow());
+module.exports = config(preset.flow());
 ```
 
 #### `husky`
 
 ```js
-const { config } = require('conartist');
-const { husky } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(husky());
+module.exports = config(preset.husky());
 ```
 
 #### `jest`
 
 ```js
-const { config } = require('conartist');
-const { jest } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(jest());
+module.exports = config(preset.jest());
 ```
 
 #### `rollup`
 
 ```js
-const { config } = require('conartist');
-const { rollup } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(rollup());
+module.exports = config(preset.rollup());
 ```
 
 #### `typescript`
 
 ```js
-const { config } = require('conartist');
-const { typescript } = require('conartist/node/preset');
+const { config, preset } = require('conartist');
 
-module.exports = config(typescript());
+module.exports = config(preset.typescript());
 ```

@@ -3,7 +3,7 @@ const outdent = require('outdent');
 const path = require('path');
 const username = require('username');
 
-const { load } = require('..');
+const { load } = require('../load');
 
 module.exports = opts => {
   const pkg = load('package.json');

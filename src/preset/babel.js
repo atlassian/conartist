@@ -1,4 +1,5 @@
 const { merge } = require('lodash');
+
 module.exports = opts => {
   opts = merge(
     {

@@ -4,6 +4,7 @@ const { array, js, json, string } = require('./handler');
 const { getHandlerLocator, setHandlerLocator } = require('./handler-locator');
 const { load, raw, resolve } = require('./load');
 const { sync } = require('./sync');
+const preset = require('./preset');
 
 module.exports = {
   array,
@@ -15,6 +16,7 @@ module.exports = {
   js,
   json,
   load,
+  preset,
   raw,
   resolve,
   string,
