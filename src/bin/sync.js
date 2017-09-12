@@ -1,6 +1,7 @@
 const path = require('path');
 
-const { load, sync } = require('../src');
+const { load } = require('../load');
+const { sync } = require('../sync');
 
 module.exports = () => {
   const config = load('conartist.js');

@@ -24,7 +24,7 @@
   "description": "Keep all of your build configs in sync.",
   "version": "0.9.0",
   "bin": {
-    "conartist": "./bin/index.js"
+    "conartist": "./node/bin/index.js"
   },
   "dependencies": {
     "babel-preset-env": "^1.6.0",
