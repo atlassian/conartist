@@ -14,6 +14,7 @@ module.exports = () => ({
       'rollup-plugin-babel': '^3.0.2',
       'rollup-plugin-uglify': '^2.0.1'
     },
+    files: ['umd/'],
     scripts: {
       'build:umd': 'rollup -c && rollup -c --min'
     }

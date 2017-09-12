@@ -46,6 +46,11 @@ module.exports = opts => {
         'babel-preset-react': '^6.24.1',
         'babel-preset-stage-0': '^6.24.1'
       },
+      files: [
+        opts.es ? 'es/' : undefined,
+        opts.esnext ? 'esnext/' : undefined,
+        opts.node ? 'node/' : undefined
+      ],
       scripts: {
         'build:es': opts.es
           ? 'babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es'

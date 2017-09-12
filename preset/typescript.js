@@ -3,7 +3,10 @@ module.exports = () => ({
   'package.json': {
     devDependencies: {
       typescript: '~2.5.0'
-    }
+    },
+    files: ['ts/'],
+    main: 'ts/index.js',
+    typings: 'ts/index.d.ts'
   },
   'tsconfig.json': {
     compilerOptions: {
