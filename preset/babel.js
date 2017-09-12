@@ -34,6 +34,11 @@ module.exports = opts => {
           };
         }
       : undefined,
+    '.gitignore': [
+      opts.es ? '/es' : undefined,
+      opts.esnext ? '/esnext' : undefined,
+      opts.node ? '/node' : undefined
+    ],
     'package.json': {
       devDependencies: {
         'babel-cli': '^6.24.1',

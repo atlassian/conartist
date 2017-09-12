@@ -6,6 +6,7 @@ module.exports = () => ({
       presets: [['env', { modules: false }], 'react', 'stage-0']
     };
   },
+  '.gitignore': ['/umd'],
   'package.json': {
     devDependencies: {
       'babel-preset-es2015-rollup': '^3.0.0',

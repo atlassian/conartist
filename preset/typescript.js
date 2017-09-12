@@ -1,4 +1,5 @@
 module.exports = () => ({
+  '.gitignore': ['/ts'],
   'package.json': {
     devDependencies: {
       typescript: '~2.5.0'
@@ -16,7 +17,7 @@ module.exports = () => ({
       declaration: true,
       jsx: 'react',
       pretty: true,
-      outDir: 'dist'
+      outDir: 'ts'
     },
     include: ['src/index.ts'],
     exclude: ['node_modules']

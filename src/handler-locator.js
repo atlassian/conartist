@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { array, js, json, string } = require('./handler');
 
 let currentHandlerLocator;
@@ -16,10 +18,6 @@ setHandlerLocator(function(key, val) {
   const basename = path.basename(key);
   if (basename === '.babelrc') return json();
   if (basename === '.eslintrc') return json();
-
-  const extname = path.extname(key);
-  if (extname === '.js') return js();
-  if (extname === '.json') return json();
 
   const type = typeof val;
   if (Array.isArray(val)) return array();
