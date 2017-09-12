@@ -1,8 +1,7 @@
 const path = require('path');
 
-const { load } = require('../src/util');
-const { sync } = require('../src');
+const { load, sync } = require('../src');
 
 module.exports = () => {
-  Object.keys(load(path.join(process.cwd(), 'conartist.js'))).forEach(sync);
+  Object.keys(load('conartist.js')).forEach(sync);
 };

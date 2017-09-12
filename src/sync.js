@@ -4,9 +4,7 @@ const path = require('path');
 const prettier = require('prettier');
 const mkdirp = require('mkdirp');
 
-const { load } = require('./util');
-
-const cwd = process.cwd();
+const { load } = require('./load');
 
 function unlinkConfigFile(file) {
   fs.exists(file, exists => exists && fs.unlink(file, () => {}));
@@ -21,7 +19,7 @@ async function writeConfigFile(file, config) {
 }
 
 function sync(file) {
-  const config = load(path.join(process.cwd(), 'conartist.js'));
+  const config = load('conartist.js') || {};
 
   if (config[file]) {
     writeConfigFile(file, config[file]);
