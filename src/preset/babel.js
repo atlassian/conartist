@@ -27,7 +27,7 @@ module.exports = opts => {
       ? () => {
           return {
             presets: [
-              ['env', { targets: { node: opts.node ||  } }],
+              ['env', { targets: { node: opts.node } }],
               'react',
               'stage-0'
             ]
@@ -35,10 +35,10 @@ module.exports = opts => {
         }
       : undefined,
     '.gitignore': [
-      opts.es ? '/es' : undefined,
-      opts.esnext ? '/esnext' : undefined,
-      opts.node ? '/node' : undefined
-    ],
+      opts.es && '/es',
+      opts.esnext && '/esnext',
+      opts.node && '/node'
+    ].filter(Boolean),
     'package.json': {
       devDependencies: {
         'babel-cli': '^6.24.1',
@@ -47,10 +47,11 @@ module.exports = opts => {
         'babel-preset-stage-0': '^6.24.1'
       },
       files: [
-        opts.es ? 'es/' : undefined,
-        opts.esnext ? 'esnext/' : undefined,
-        opts.node ? 'node/' : undefined
-      ],
+        opts.es && 'es/',
+        opts.esnext && 'esnext/',
+        opts.node && 'node/'
+      ].filter(Boolean),
+      main: opts.node ? './node/index.js' : './src/index.js',
       scripts: {
         'build:es': opts.es
           ? 'babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es'

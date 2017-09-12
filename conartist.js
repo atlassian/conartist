@@ -1,4 +1,10 @@
-const { config } = require('.');
-const { base } = require('./preset');
+const { config } = require('./src');
+const { babel, base } = require('./src/preset');
 
-module.exports = config(base());
+module.exports = config(
+  babel({
+    es: false,
+    esnext: false
+  }),
+  base()
+);

@@ -20,10 +20,12 @@ function locateHandler(key, val) {
 
 function config(...args) {
   const obj = merge(...args);
-  Object.keys(obj).forEach(key => {
-    const val = obj[key];
-    obj[key] = new Format(key, val, locateHandler(key, val));
-  });
+  Object.keys(obj)
+    .filter(key => obj[key] != null)
+    .forEach(key => {
+      const val = obj[key];
+      obj[key] = new Format(key, val, locateHandler(key, val));
+    });
   return obj;
 }
 

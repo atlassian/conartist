@@ -64,7 +64,7 @@ The `json` handler takes an object and merges it with other like objects, recurs
 
 ```js
 const { config } = require('conartist');
-const { babel, base } = require('conartist/preset');
+const { babel, base } = require('conartist/node/preset');
 
 module.exports = config(babel, base, {
   'package.json': {}
@@ -155,13 +155,13 @@ setHandlerLocator(function (fileName, configValue) {
 
 ### Presets
 
-Conartist ships with a few built-in presets. You can import these using `require('conartist/preset')`.
+Conartist ships with a few built-in presets. You can import these using `require('conartist/node/preset')`.
 
 #### `babel`
 
 ```js
 const { config } = require('conartist');
-const { babel } = require('conartist/preset');
+const { babel } = require('conartist/node/preset');
 
 module.exports = config(babel());
 ```
@@ -170,7 +170,7 @@ module.exports = config(babel());
 
 ```js
 const { config } = require('conartist');
-const { base } = require('conartist/preset');
+const { base } = require('conartist/node/preset');
 
 module.exports = config(base({
   // Your name to use in the LICENSE file.
@@ -187,7 +187,7 @@ module.exports = config(base({
 
 ```js
 const { config } = require('conartist');
-const { flow } = require('conartist/preset');
+const { flow } = require('conartist/node/preset');
 
 module.exports = config(flow());
 ```
@@ -196,7 +196,7 @@ module.exports = config(flow());
 
 ```js
 const { config } = require('conartist');
-const { husky } = require('conartist/preset');
+const { husky } = require('conartist/node/preset');
 
 module.exports = config(husky());
 ```
@@ -205,7 +205,7 @@ module.exports = config(husky());
 
 ```js
 const { config } = require('conartist');
-const { jest } = require('conartist/preset');
+const { jest } = require('conartist/node/preset');
 
 module.exports = config(jest());
 ```
@@ -214,7 +214,7 @@ module.exports = config(jest());
 
 ```js
 const { config } = require('conartist');
-const { rollup } = require('conartist/preset');
+const { rollup } = require('conartist/node/preset');
 
 module.exports = config(rollup());
 ```
@@ -223,7 +223,7 @@ module.exports = config(rollup());
 
 ```js
 const { config } = require('conartist');
-const { typescript } = require('conartist/preset');
+const { typescript } = require('conartist/node/preset');
 
 module.exports = config(typescript());
 ```
