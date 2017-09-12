@@ -4,7 +4,7 @@ module.exports = opts => {
     {
       es: true,
       esnext: true,
-      node: true
+      node: '6.0.0'
     },
     opts
   );
@@ -27,7 +27,7 @@ module.exports = opts => {
       ? () => {
           return {
             presets: [
-              ['env', { targets: { node: process.version } }],
+              ['env', { targets: { node: opts.node ||  } }],
               'react',
               'stage-0'
             ]
