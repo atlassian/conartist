@@ -1,7 +1,4 @@
 {
-  "babel": {
-    "presets": ["env", "stage-0"]
-  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.6.0",
@@ -9,16 +6,25 @@
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^20.0.4"
   },
-  "files": ["node/"],
+  "files": [
+    "node/"
+  ],
   "main": "./node/index.js",
   "scripts": {
-    "build:node":
-      "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
+    "build:node": "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
     "test": "jest",
     "prepublish": "npm run build:node"
   },
   "jest": {
-    "modulePathIgnorePatterns": ["./node_modules"]
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "stage-0"
+    ]
   },
   "name": "conartist",
   "description": "Keep all of your build configs in sync.",
