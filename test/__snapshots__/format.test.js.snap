@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`format formatCode 1`] = `
+"const test = { key1: 'test', key2: 'test' };
+"
+`;
+
+exports[`format formatJson 1`] = `
+"{
+  \\"key1\\": \\"test\\",
+  \\"key2\\": \\"test\\"
+}"
+`;

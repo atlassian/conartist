@@ -11,7 +11,10 @@ function raw(filepath) {
   return resolved && fs.readFileSync(resolved).toString();
 }
 
-function resolve(filepath) {
+function resolve(filepath, relative) {
+  if (relative) {
+    return path.relative(path.join(process.cwd(), relative), resolve(filepath));
+  }
   try {
     return require.resolve(path.join(process.cwd(), filepath));
   } catch (e) {}
