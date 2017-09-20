@@ -13,14 +13,14 @@ module.exports = opts => {
     'config/babel.es.js': opts.es
       ? () => {
           return {
-            presets: [['env', { modules: false }], 'react', 'stage-0']
+            presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
           };
         }
       : undefined,
     'config/babel.esnext.js': opts.esnext
       ? () => {
           return {
-            presets: [['env', { es2015: false }], 'react', 'stage-0']
+            presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
           };
         }
       : undefined,
@@ -29,6 +29,7 @@ module.exports = opts => {
           return {
             presets: [
               ['env', { targets: { node: opts.node } }],
+              'flow',
               'react',
               'stage-0'
             ]
@@ -44,6 +45,9 @@ module.exports = opts => {
       devDependencies: {
         'babel-cli': '^6.24.1',
         'babel-preset-env': '^1.6.0',
+        'babel-preset-es2016': '^6.24.1',
+        'babel-preset-es2017': '^6.24.1',
+        'babel-preset-flow': '^6.23.0',
         'babel-preset-react': '^6.24.1',
         'babel-preset-stage-0': '^6.24.1'
       },
