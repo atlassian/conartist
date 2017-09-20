@@ -56,7 +56,9 @@ module.exports = opts => {
         opts.esnext && 'esnext/',
         opts.node && 'node/'
       ].filter(Boolean),
-      main: opts.node ? './node/index.js' : './src/index.js',
+      main: opts.node ? 'node/index.js' : 'src/index.js',
+      module: opts.es ? 'es/index.js' : undefined,
+      esnext: opts.esnext ? 'esnext/index.js' : undefined,
       scripts: {
         'build:es': opts.es
           ? 'babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es'

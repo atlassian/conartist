@@ -9,6 +9,7 @@ module.exports = () => ({
   },
   '.gitignore': ['/umd'],
   'package.json': {
+    browser: 'umd/index.js',
     devDependencies: {
       'babel-preset-es2015-rollup': '^3.0.0',
       rollup: '^0.49.3',
