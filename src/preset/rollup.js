@@ -11,7 +11,14 @@ module.exports = () => ({
   'package.json': {
     browser: 'umd/index.js',
     devDependencies: {
+      'babel-cli': '^6.24.1',
+      'babel-preset-env': '^1.6.0',
       'babel-preset-es2015-rollup': '^3.0.0',
+      'babel-preset-es2016': '^6.24.1',
+      'babel-preset-es2017': '^6.24.1',
+      'babel-preset-flow': '^6.23.0',
+      'babel-preset-react': '^6.24.1',
+      'babel-preset-stage-0': '^6.24.1'
       rollup: '^0.49.3',
       'rollup-plugin-babel': '^3.0.2',
       'rollup-plugin-uglify': '^2.0.1'
