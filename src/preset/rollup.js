@@ -4,7 +4,7 @@ module.exports = () => ({
   'config/babel.umd.js': () => {
     return {
       babelrc: false,
-      presets: [['env', { modules: false }], 'react', 'stage-0']
+      presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
     };
   },
   '.gitignore': ['/umd'],
