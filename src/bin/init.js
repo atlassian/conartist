@@ -8,10 +8,9 @@ module.exports = () => {
     fs.writeFileSync(
       'conartist.js',
       outdent`
-        const { config } = require('conartist');
-        const { base } = require('conartist/preset');
+        const { config, preset } = require('conartist');
 
-        module.exports = config(base());
+        module.exports = config(preset.base());
       `
     );
   }

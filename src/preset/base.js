@@ -6,7 +6,7 @@ const username = require('username');
 const { load } = require('../load');
 
 module.exports = opts => {
-  const pkg = load('package.json');
+  const pkg = load('package.json') || {};
   opts = merge(
     {
       name: (pkg.author && pkg.author.name) || username.sync() || 'Your Name',
