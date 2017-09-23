@@ -13,6 +13,7 @@ module.exports = opts => {
     'config/babel.es.js': opts.es
       ? () => {
           return {
+            babelrc: false,
             presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
           };
         }
@@ -20,6 +21,7 @@ module.exports = opts => {
     'config/babel.esnext.js': opts.esnext
       ? () => {
           return {
+            babelrc: false,
             presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
           };
         }
@@ -27,6 +29,7 @@ module.exports = opts => {
     'config/babel.node.js': opts.node
       ? () => {
           return {
+            babelrc: false,
             presets: [
               ['env', { targets: { node: opts.node } }],
               'flow',
