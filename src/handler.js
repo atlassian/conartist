@@ -7,20 +7,13 @@ const { load, raw, resolve } = require('./load');
 const { merge } = require('./merge');
 
 function array(opts) {
-  opts = merge(
-    {
-      delimiter: '\n',
-      filter: (val, idx, arr) => arr.indexOf(val) === idx,
-      map: val => val
-    },
-    opts
-  );
+  opts = merge({ delimiter: '\n' }, opts);
   return function array(data, file) {
-    return data
-      .concat((raw(file) || '').split(opts.delimiter))
-      .filter(opts.filter)
-      .map(opts.map)
-      .join(opts.delimiter);
+    // We use objects because merging behaves differently for top-level arrays than it does objects. See merge() tests.
+    return merge(
+      { temp: data },
+      { temp: (raw(file) || '').split(opts.delimiter) }
+    ).temp.join(opts.delimiter);
   };
 }
 
