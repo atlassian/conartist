@@ -1,5 +1,5 @@
 const { getHandlerLocator } = require('./handler-locator');
-const { merge } = require('lodash');
+const { merge } = require('./merge');
 
 class Format {
   constructor(file, data, func) {

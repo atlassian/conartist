@@ -1,4 +1,4 @@
-const { merge } = require('lodash');
+const { merge } = require('../merge');
 
 module.exports = opts => {
   opts = merge(

@@ -1,5 +1,6 @@
-const { merge } = require('lodash');
 const path = require('path');
+
+const { merge } = require('../merge');
 const babel = require('./babel');
 
 module.exports = () =>

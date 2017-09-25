@@ -1,9 +1,9 @@
-const { merge } = require('lodash');
 const outdent = require('outdent');
 const path = require('path');
 const username = require('username');
 
 const { load } = require('../load');
+const { merge } = require('../merge');
 
 module.exports = opts => {
   const pkg = load('package.json') || {};

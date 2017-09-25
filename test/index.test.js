@@ -10,6 +10,7 @@ import * as index from '../src';
   'js',
   'json',
   'load',
+  'merge',
   'preset:object',
   'raw',
   'resolve',

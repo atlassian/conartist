@@ -1,10 +1,10 @@
-const { merge } = require('lodash');
 const fs = require('fs');
 const outdent = require('outdent');
 const path = require('path');
 
 const { formatCode, formatJson } = require('./format');
 const { load, raw, resolve } = require('./load');
+const { merge } = require('./merge');
 
 function array(opts) {
   opts = merge(
