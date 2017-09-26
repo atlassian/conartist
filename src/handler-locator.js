@@ -19,6 +19,9 @@ setHandlerLocator(function(key, val) {
   if (basename === '.babelrc') return json();
   if (basename === '.eslintrc') return json();
 
+  const extname = path.extname(key);
+  if (extname === '.js') return js();
+
   const type = typeof val;
   if (Array.isArray(val)) return array();
   if (type === 'function') return js();
