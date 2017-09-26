@@ -158,13 +158,30 @@ Conartist ships with a few built-in presets.
 
 #### `babel`
 
+- Maintains config for `es`, `esnext` and `node`. See config for details.
+- Adds necessary packages in `package.json`.
+- Adds babel config to the `package.json` for each enabled build.
+- Adds entries to the `.gitignore` for build dirs.
+
 ```js
 const { config, preset } = require('conartist');
 
-module.exports = config(preset.babel());
+module.exports = config(preset.babel({
+  // Whether or not to have an esm + es5 build.
+  es: true,
+
+  // Whether or not to have an es2015 build.
+  esnext: true,
+
+  // Whether or not to have a build for a specific node version.
+  node: '8.4.0'
+}));
 ```
 
 #### `base`
+
+- Sets up and maintains a basic project layout.
+- Maintains an `.editorconfig`, `.gitignore`, `.travis.yml`, `LICENSE`, `README.md` and a basic `package.json`.
 
 ```js
 const { config, preset } = require('conartist');
@@ -182,6 +199,9 @@ module.exports = config(preset.base({
 
 #### `flow`
 
+- Adds `flow-bin` to the `package.json`.
+- Maintains a `.flowconfig` file.
+
 ```js
 const { config, preset } = require('conartist');
 
@@ -189,6 +209,9 @@ module.exports = config(preset.flow());
 ```
 
 #### `husky`
+
+- Adds `husky` to the `package.json`.
+- Adds precommit hooks.
 
 ```js
 const { config, preset } = require('conartist');
@@ -198,6 +221,10 @@ module.exports = config(preset.husky());
 
 #### `jest`
 
+- Adds `jest` as a dev dependency.
+- Maintains a babel config for `BABEL_ENV=test`.
+- Sets up NPM script.
+
 ```js
 const { config, preset } = require('conartist');
 
@@ -206,6 +233,11 @@ module.exports = config(preset.jest());
 
 #### `rollup`
 
+- Adds `rollup` as a dev dependency.
+- Maintains a `rollup.config.js` file.
+- Adds a `BABEL_ENV=umd` build.
+- Configures the `.gitignore` file.
+
 ```js
 const { config, preset } = require('conartist');
 
@@ -213,6 +245,8 @@ module.exports = config(preset.rollup());
 ```
 
 #### `typescript`
+
+- Maintains a basic TypeScript configuration.
 
 ```js
 const { config, preset } = require('conartist');
