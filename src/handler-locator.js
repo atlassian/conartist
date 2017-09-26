@@ -16,13 +16,12 @@ function setHandlerLocator(newHandlerLocator) {
 
 setHandlerLocator(function(key, val) {
   const basename = path.basename(key);
+  const extname = path.extname(key);
+  const type = typeof val;
+
   if (basename === '.babelrc') return json();
   if (basename === '.eslintrc') return json();
-
-  const extname = path.extname(key);
-  if (extname === '.js') return js();
-
-  const type = typeof val;
+  if (extname === '.js' && type === 'object') return js();
   if (Array.isArray(val)) return array();
   if (type === 'function') return js();
   if (type === 'object') return json();

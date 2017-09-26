@@ -18,16 +18,21 @@ module.exports = opts => {
     'package.json': {
       babel: {
         env: {
-          es: {
-            presets: opts.es
-              ? [['env', { modules: false }], 'flow', 'react', 'stage-0']
-              : undefined
-          },
-          esnext: {
-            presets: opts.esnext
-              ? ['es2016', 'es2017', 'flow', 'react', 'stage-0']
-              : undefined
-          },
+          es: opts.es
+            ? {
+                presets: [
+                  ['env', { modules: false }],
+                  'flow',
+                  'react',
+                  'stage-0'
+                ]
+              }
+            : undefined,
+          esnext: opts.esnext
+            ? {
+                presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
+              }
+            : undefined,
           node: opts.node
             ? {
                 presets: [

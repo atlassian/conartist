@@ -1,7 +1,37 @@
 {
+  "babel": {
+    "env": {
+      "node": {
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "6.0.0"
+              }
+            }
+          ],
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      },
+      "test": {
+        "presets": [
+          "env",
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      }
+    }
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-es2016": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^20.0.4"
@@ -11,19 +41,13 @@
   ],
   "main": "./node/index.js",
   "scripts": {
-    "build:node": "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
+    "build:node": "BABEL_ENV=node babel src --out-dir node",
     "test": "jest",
-    "prepublish": "npm run build:node"
+    "prepare": "npm run build:node"
   },
   "jest": {
     "modulePathIgnorePatterns": [
       "./node_modules"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "env",
-      "stage-0"
     ]
   },
   "name": "conartist",
@@ -37,6 +61,7 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "deep-equal": "^1.0.1",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "outdent": "^0.3.0",
