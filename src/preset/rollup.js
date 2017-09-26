@@ -14,8 +14,10 @@ module.exports = () =>
       '.gitignore': ['/umd'],
       'package.json': {
         babel: {
-          rollup: {
-            presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
+          env: {
+            rollup: {
+              presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
+            }
           }
         },
         browser: 'umd/index.js',
