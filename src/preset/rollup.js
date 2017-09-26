@@ -11,14 +11,13 @@ module.exports = () =>
       node: false
     }),
     {
-      'config/babel.umd.js': () => {
-        return {
-          babelrc: false,
-          presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
-        };
-      },
       '.gitignore': ['/umd'],
       'package.json': {
+        babel: {
+          rollup: {
+            presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
+          }
+        },
         browser: 'umd/index.js',
         devDependencies: {
           rollup: '^0.49.3',
@@ -27,15 +26,11 @@ module.exports = () =>
         },
         files: ['umd/'],
         scripts: {
-          'build:umd': 'rollup -c && rollup -c --min'
+          'build:umd': 'BABEL_ENV=umd rollup -c && rollup -c --min'
         }
       },
       'rollup.config.js': () => {
         const babel = require('rollup-plugin-babel');
-        const babelConfig = require(path.join(
-          process.cwd(),
-          'config/babel.umd'
-        ));
         const uglify = require('rollup-plugin-uglify');
         const yargs = require('yargs');
         const { min } = yargs.argv;
@@ -45,7 +40,7 @@ module.exports = () =>
             file: `umd/index${min ? '.min' : ''}.js`,
             format: 'umd'
           },
-          plugins: [babel(babelConfig)].concat(min ? uglify() : []),
+          plugins: [babel()].concat(min ? uglify() : []),
           sourcemap: true
         };
       }

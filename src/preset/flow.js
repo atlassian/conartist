@@ -6,14 +6,14 @@ module.exports = () => ({
     .*/\..*
     .*/docs/.*
     .*/es/.*
-    .*/es-latest/.*
-    .*/lib/.*
+    .*/esnext/.*
+    .*/node/.*
     .*/node_modules/.*
-    .*/test/.*
     .*/umd/.*
 
     [include]
     ./src/
+    ./test/
 
     [libs]
 
@@ -22,7 +22,8 @@ module.exports = () => ({
   `,
   'package.json': {
     devDependencies: {
-      'eslint-plugin-flowtype': '^2.34.0'
+      'eslint-plugin-flowtype': '^2.34.0',
+      'flow-bin': '^0.55.0'
     }
   }
 });

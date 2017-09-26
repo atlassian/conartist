@@ -10,41 +10,36 @@ module.exports = opts => {
     opts
   );
   return {
-    'config/babel.es.js': opts.es
-      ? () => {
-          return {
-            babelrc: false,
-            presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
-          };
-        }
-      : undefined,
-    'config/babel.esnext.js': opts.esnext
-      ? () => {
-          return {
-            babelrc: false,
-            presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
-          };
-        }
-      : undefined,
-    'config/babel.node.js': opts.node
-      ? () => {
-          return {
-            babelrc: false,
-            presets: [
-              ['env', { targets: { node: opts.node } }],
-              'flow',
-              'react',
-              'stage-0'
-            ]
-          };
-        }
-      : undefined,
     '.gitignore': [
       opts.es && '/es',
       opts.esnext && '/esnext',
       opts.node && '/node'
     ].filter(Boolean),
     'package.json': {
+      babel: {
+        env: {
+          es: {
+            presets: opts.es
+              ? [['env', { modules: false }], 'flow', 'react', 'stage-0']
+              : undefined
+          },
+          esnext: {
+            presets: opts.esnext
+              ? ['es2016', 'es2017', 'flow', 'react', 'stage-0']
+              : undefined
+          },
+          node: opts.node
+            ? {
+                presets: [
+                  ['env', { targets: { node: opts.node } }],
+                  'flow',
+                  'react',
+                  'stage-0'
+                ]
+              }
+            : undefined
+        }
+      },
       devDependencies: {
         'babel-cli': '^6.24.1',
         'babel-preset-env': '^1.6.0',
@@ -63,14 +58,12 @@ module.exports = opts => {
       module: opts.es ? 'es/index.js' : undefined,
       esnext: opts.esnext ? 'esnext/index.js' : undefined,
       scripts: {
-        'build:es': opts.es
-          ? 'babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es'
-          : undefined,
+        'build:es': opts.es ? 'BABEL_ENV=es babel src --out-dir es' : undefined,
         'build:esnext': opts.esnext
-          ? 'babel --no-babelrc src --out-dir esnext --presets=$(pwd)/config/babel.esnext'
+          ? 'BABEL_ENV=esnext babel src --out-dir esnext'
           : undefined,
         'build:node': opts.node
-          ? 'babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node'
+          ? 'BABEL_ENV=node babel src --out-dir node'
           : undefined
       }
     }
