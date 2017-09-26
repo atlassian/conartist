@@ -52,7 +52,7 @@
   },
   "name": "conartist",
   "description": "Keep all of your build configs in sync.",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "bin": {
     "conartist": "./node/bin/index.js"
   },
