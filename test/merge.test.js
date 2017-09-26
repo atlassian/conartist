@@ -14,4 +14,14 @@ describe('merge', () => {
     expect(call1).toMatchObject(match);
     expect(call2).toMatchObject(match);
   });
+  it('with deeply equal objects', () => {
+    const call1 = merge(
+      { arr: [{ one: { two: 'three' } }] },
+      { arr: [{ one: { two: 'three' } }, { four: 'five' }] }
+    );
+    const call2 = merge(call1, Object.assign({}, call1));
+    const match = { arr: [{ one: { two: 'three' } }, { four: 'five' }] };
+    expect(call1).toMatchObject(match);
+    expect(call2).toMatchObject(match);
+  });
 });

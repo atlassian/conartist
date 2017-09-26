@@ -2,7 +2,9 @@ const { mergeWith } = require('lodash');
 const deepEqual = require('deep-equal');
 
 function unique(val, idx, arr) {
-  return arr.some(cmp => deepEqual(val, cmp));
+  return typeof val === 'object'
+    ? arr.findIndex(cmp => deepEqual(val, cmp)) === idx
+    : arr.indexOf(val) === idx;
 }
 
 function arrayMerger(val1, val2) {

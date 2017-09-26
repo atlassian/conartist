@@ -23,7 +23,7 @@ describe('handler-locator', () => {
     // Known types.
     expect(defaultHandlerLocator('.babelrc').name).toBe('json');
     expect(defaultHandlerLocator('.eslintrc').name).toBe('json');
-    expect(defaultHandlerLocator('rollup.config.js').name).toBe('js');
+    expect(defaultHandlerLocator('rollup.config.js', {}).name).toBe('js');
     expect(defaultHandlerLocator('', []).name).toBe('array');
     expect(defaultHandlerLocator('', () => {}).name).toBe('js');
     expect(defaultHandlerLocator('', {}).name).toBe('json');
