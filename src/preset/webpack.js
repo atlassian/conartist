@@ -1,9 +1,20 @@
+const path = require('path');
 const { merge } = require('../merge');
 
-const webpack = opts => {
+function local(dep) {
+  return require(localPath(dep));
+}
+
+function localPath(dep) {
+  return path.join(process.cwd(), 'node_modules', dep);
+}
+
+module.exports = opts => {
   opts = merge(
     {
-      jsx: 'h'
+      dst: 'public',
+      jsx: 'React.createElement',
+      src: 'src'
     },
     opts
   );
@@ -17,15 +28,15 @@ const webpack = opts => {
         'babel-preset-flow': '^6.23.0',
         'babel-preset-react': '^6.24.1',
         'babel-preset-stage-0': '^6.24.1',
+        'file-loader': '^1.1.5',
         webpack: '^3.8.1',
         'webpack-dev-server': '^2.9.4'
       }
     },
     'webpack.config.js'() {
-      const path = require('path');
-      const webpack = require('webpack');
-      const contextPath = path.join(__dirname, 'src');
-      const publicPath = path.join(__dirname, 'public');
+      const webpack = local('webpack');
+      const contextPath = path.join(process.cwd(), opts.src);
+      const publicPath = path.join(process.cwd(), opts.dst);
       return {
         context: contextPath,
         devServer: {
@@ -41,7 +52,7 @@ const webpack = opts => {
             {
               test: /\.js$/,
               use: {
-                loader: 'babel-loader',
+                loader: localPath('babel-loader'),
                 options: {
                   plugins: [
                     opts.jsx
@@ -54,7 +65,12 @@ const webpack = opts => {
             },
             {
               test: /\.(html)/,
-              loaders: 'file-loader?{ name: "[path][name].[ext]"}'
+              use: {
+                loader: localPath('file-loader'),
+                options: {
+                  name: '[path][name].[ext]'
+                }
+              }
             }
           ]
         },
