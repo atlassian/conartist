@@ -5,7 +5,8 @@ module.exports = [
   'husky',
   'jest',
   'rollup',
-  'typescript'
+  'typescript',
+  'webpack'
 ].reduce((prev, curr) => {
   prev[curr] = require(`./${curr}`);
   return prev;
