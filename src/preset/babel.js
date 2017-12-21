@@ -1,5 +1,7 @@
 const { merge } = require('../merge');
 
+const ignore = ['__tests__', 'node_modules'];
+
 module.exports = opts => {
   opts = merge(
     {
@@ -14,16 +16,19 @@ module.exports = opts => {
       env: {
         es: opts.es
           ? {
+              ignore,
               presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
             }
           : undefined,
         esnext: opts.esnext
           ? {
+              ignore,
               presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
             }
           : undefined,
         node: opts.node
           ? {
+              ignore,
               presets: [
                 ['env', { targets: { node: opts.node } }],
                 'flow',
