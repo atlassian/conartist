@@ -1,6 +1,7 @@
 module.exports = [
   'babel',
   'base',
+  'enzyme',
   'flow',
   'husky',
   'jest',
