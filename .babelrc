@@ -1,0 +1,20 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "6.0.0"
+        }
+      }
+    ],
+    "flow",
+    "react",
+    "stage-0"
+  ],
+  "env": {
+    "test": {
+      "presets": ["env", "flow", "react", "stage-0"]
+    }
+  }
+}

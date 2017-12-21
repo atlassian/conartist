@@ -1,31 +1,4 @@
 {
-  "babel": {
-    "env": {
-      "node": {
-        "presets": [
-          [
-            "env",
-            {
-              "targets": {
-                "node": "6.0.0"
-              }
-            }
-          ],
-          "flow",
-          "react",
-          "stage-0"
-        ]
-      },
-      "test": {
-        "presets": [
-          "env",
-          "flow",
-          "react",
-          "stage-0"
-        ]
-      }
-    }
-  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.6.0",
