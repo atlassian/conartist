@@ -10,41 +10,36 @@ module.exports = opts => {
     opts
   );
   return {
+    '.babelrc': {
+      env: {
+        es: opts.es
+          ? {
+              presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
+            }
+          : undefined,
+        esnext: opts.esnext
+          ? {
+              presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
+            }
+          : undefined,
+        node: opts.node
+          ? {
+              presets: [
+                ['env', { targets: { node: opts.node } }],
+                'flow',
+                'react',
+                'stage-0'
+              ]
+            }
+          : undefined
+      }
+    },
     '.gitignore': [
       opts.es && '/es',
       opts.esnext && '/esnext',
       opts.node && '/node'
     ].filter(Boolean),
     'package.json': {
-      babel: {
-        env: {
-          es: opts.es
-            ? {
-                presets: [
-                  ['env', { modules: false }],
-                  'flow',
-                  'react',
-                  'stage-0'
-                ]
-              }
-            : undefined,
-          esnext: opts.esnext
-            ? {
-                presets: ['es2016', 'es2017', 'flow', 'react', 'stage-0']
-              }
-            : undefined,
-          node: opts.node
-            ? {
-                presets: [
-                  ['env', { targets: { node: opts.node } }],
-                  'flow',
-                  'react',
-                  'stage-0'
-                ]
-              }
-            : undefined
-        }
-      },
       devDependencies: {
         'babel-cli': '^6.24.1',
         'babel-preset-env': '^1.6.0',

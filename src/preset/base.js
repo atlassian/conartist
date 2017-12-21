@@ -31,7 +31,7 @@ module.exports = opts => {
       trim_trailing_whitespace = true
       insert_final_newline = true
     `,
-    '.gitignore': ['/node_modules', 'npm-debug.log*'],
+    '.gitignore': ['node_modules', 'npm-debug.log*'],
     '.nvmrc': opts.node,
     '.travis.yml': 'language: node_js',
     LICENSE: outdent`

@@ -11,15 +11,15 @@ module.exports = () =>
       node: false
     }),
     {
+      '.babelrc': {
+        env: {
+          rollup: {
+            presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
+          }
+        }
+      },
       '.gitignore': ['/umd'],
       'package.json': {
-        babel: {
-          env: {
-            rollup: {
-              presets: [['env', { modules: false }], 'flow', 'react', 'stage-0']
-            }
-          }
-        },
         browser: 'umd/index.js',
         devDependencies: {
           rollup: '^0.49.3',
