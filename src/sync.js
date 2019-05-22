@@ -2,8 +2,8 @@ const fs = require("fs-extra");
 const { getConfig } = require("./config");
 const { getHandlerLocator } = require("./handler-locator");
 
-async function sync() {
-  const config = await getConfig();
+async function sync(opts) {
+  const config = await getConfig(opts);
   const handlerLocator = getHandlerLocator();
   Object.keys(config).forEach(async file => {
     if (config[file]) {

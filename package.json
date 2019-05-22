@@ -1,12 +1,5 @@
 {
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-es2016": "^6.24.1",
-    "babel-preset-es2017": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
     "jest": "^21.1.0"
   },
   "main": "./src/index.js",
@@ -20,19 +13,13 @@
   "description": "Keep all of your build configs in sync.",
   "version": "0.15.1",
   "bin": {
-    "conartist": "./src/bin/index.js"
+    "conartist": "./src/bin.js"
   },
   "dependencies": {
     "cosmiconfig": "^5.2.1",
-    "deep-equal": "^1.0.1",
     "fs-extra": "^8.0.1",
-    "lodash": "^4.17.4",
     "meow": "^5.0.0",
-    "outdent": "^0.3.0",
-    "prettier": "^1.17.1",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-uglify": "^2.0.1",
-    "username": "^3.0.0"
+    "prettier": "^1.17.1"
   },
   "repository": {
     "type": "git",
