@@ -9,40 +9,30 @@
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^21.1.0"
   },
-  "files": [
-    "node/"
-  ],
-  "main": "./node/index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "build:node": "BABEL_ENV=node babel src --out-dir node",
-    "test": "jest",
-    "prepare": "npm run build:node"
+    "test": "jest"
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ]
+    "modulePathIgnorePatterns": ["./node_modules"]
   },
   "name": "conartist",
   "description": "Keep all of your build configs in sync.",
   "version": "0.15.1",
   "bin": {
-    "conartist": "./node/bin/index.js"
+    "conartist": "./src/bin/index.js"
   },
   "dependencies": {
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-es2015-rollup": "^3.0.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "cosmiconfig": "^5.2.1",
     "deep-equal": "^1.0.1",
+    "fs-extra": "^8.0.1",
     "lodash": "^4.17.4",
-    "mkdirp": "^0.5.1",
+    "meow": "^5.0.0",
     "outdent": "^0.3.0",
-    "prettier": "^1.7.0",
+    "prettier": "^1.17.1",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
-    "username": "^3.0.0",
-    "yargs": "^9.0.1"
+    "username": "^3.0.0"
   },
   "repository": {
     "type": "git",

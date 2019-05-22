@@ -1,6 +1,6 @@
-const path = require('path');
+const path = require("path");
 
-const { array, js, json, string } = require('./handler');
+const { array, js, json, string } = require("./handler");
 
 let currentHandlerLocator;
 
@@ -19,13 +19,12 @@ setHandlerLocator(function(key, val) {
   const extname = path.extname(key);
   const type = typeof val;
 
-  if (basename === '.babelrc') return json();
-  if (basename === '.eslintrc') return json();
-  if (extname === '.js' && type === 'object') return js();
-  if (Array.isArray(val)) return array();
-  if (type === 'function') return js();
-  if (type === 'object') return json();
-  if (type === 'string') return string();
+  if (basename === ".babelrc") return json;
+  if (basename === ".eslintrc") return json;
+  if (extname === ".js") return js;
+  if (type === "object") return json;
+
+  return string;
 });
 
 module.exports = {

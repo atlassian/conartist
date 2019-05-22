@@ -1,31 +1,18 @@
-const fs = require('fs');
-const outdent = require('outdent');
-const path = require('path');
-const prettier = require('prettier');
-const mkdirp = require('mkdirp');
+const fs = require("fs-extra");
+const { getConfig } = require("./config");
+const { getHandlerLocator } = require("./handler-locator");
 
-const { load } = require('./load');
-
-function unlinkConfigFile(file) {
-  fs.exists(file, exists => exists && fs.unlink(file, () => {}));
-}
-
-async function writeConfigFile(file, config) {
-  const dirname = path.dirname(file);
-  if (dirname) {
-    mkdirp(dirname);
-  }
-  fs.writeFile(file, await config.process(), () => {});
-}
-
-function sync(file) {
-  const config = load('conartist.js') || {};
-
-  if (config[file]) {
-    writeConfigFile(file, config[file]);
-  } else {
-    unlinkConfigFile(file);
-  }
+async function sync() {
+  const config = await getConfig();
+  const handlerLocator = getHandlerLocator();
+  Object.keys(config).forEach(async file => {
+    if (config[file]) {
+      const handler = handlerLocator(file, config[file]);
+      await fs.outputFile(file, handler(file, config[file]));
+    } else {
+      await fs.remove(file);
+    }
+  });
 }
 
 module.exports = {
