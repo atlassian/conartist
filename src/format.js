@@ -5,7 +5,6 @@ function formatCode(code) {
 }
 
 function formatJson(json) {
-  json = typeof json === "string" ? JSON.parse(json) : json;
   return JSON.stringify(json, null, 2);
 }
 

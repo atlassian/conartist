@@ -9,11 +9,15 @@ test("exports", () => {
   ).toEqual({
     formatCode: "function",
     formatJson: "function",
-    getHandlerLocator: "function",
-    js: "function",
-    json: "function",
-    setHandlerLocator: "function",
-    string: "function",
+    getConfig: "function",
+    getHandler: "function",
+    handleArray: "function",
+    handleJs: "function",
+    handleJson: "function",
+    handleString: "function",
+    readFile: "function",
+    readJson: "function",
+    setHandler: "function",
     sync: "function"
   });
 });
