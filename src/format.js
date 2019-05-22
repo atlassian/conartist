@@ -1,7 +1,7 @@
 const prettier = require("prettier");
 
 function formatCode(code) {
-  return prettier.format(code, Object.assign({}, { parser: "babel" }));
+  return prettier.format(code, { parser: "babel" });
 }
 
 function formatJson(json) {
