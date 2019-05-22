@@ -51,15 +51,68 @@ Running `$ conartist` will create the specified files relative to the `cwd`.
 This is great for scaffolding out a project or keeping it in sync with what the
 configuration has in it.
 
-However, running it again will overwrite the files. If you want to compose files
-together, you can specify an object and a `{ compose }` option:
+## Built-in file handlers
 
-```json
-{
-  "conartist": {
-    ".gitignore": ["*.log", "node_modules"],
-    ".nvmrc": "10.9.0",
-    ".travis.yml": "language: node_js"
+The following are the built-in - and exported - file handlers.
+
+- `handeArray` - existing file is merged with config and entries are deduped.
+- `handleJs` - if `data` is a `string`, it uses `handleString`. If it's an
+  `object` it uses `handleJson`. File is created with `module.exports` set to
+  the handled value.
+- `handleJson` - existing file is merged with config using `lodash/merge`.
+- `handleString` - existing file takes precedence over config value.
+
+These handlers will handle the following file patterns:
+
+```js
+const mapGlob = {
+  ".nvmrc": handleString,
+  ".*rc": handleJson,
+  ".*ignore": handleArray,
+  "*.js": handleJs,
+  "*.json": handleJson
+};
+```
+
+And attempt to handle the following value types:
+
+```js
+const mapType = {
+  object: handleJson
+};
+```
+
+If a handler cannot be found, it defaults to using `handleString`.
+
+## Custom file handlers
+
+You can set a handler for all files:
+
+```js
+// conartist.config.js
+
+const { getHandler, setHandler } = require("conartist");
+
+const previousHandler = getHandler();
+
+setHandler(function myCustomHandler(file, data) {
+  if (file === ".gitignore") {
+    return data.join("\n");
   }
-}
+  return previousHandler(file, data);
+});
+
+module.exports = {
+  ".gitignore": ["*.log", "node_modules"]
+};
+```
+
+Or you can specify a handler for the file itself by providing a function:
+
+```js
+// conartist.config.js
+
+module.exports = {
+  ".gitignore": (file, data) => data.join("\n")
+};
 ```

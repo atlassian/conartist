@@ -1,6 +1,6 @@
 const fs = require("fs-extra");
-const loSort = require("lodash/sortBy");
 const loUniq = require("lodash/uniq");
+const minimatch = require("minimatch");
 const path = require("path");
 const { formatCode, formatJson } = require("./format");
 const { readFile, readJson } = require("./read");
@@ -41,48 +41,17 @@ async function handleString(file, data) {
   return `${curr || data}`;
 }
 
-const mapBasename = {
-  ".babelrc": handleJson,
-  ".eslintrc": handleJson,
-  ".gitignore": handleArray
-};
-
-const mapExtname = {
-  js: handleJs,
-  json: handleJson
+const mapGlob = {
+  ".nvmrc": handleString,
+  ".*rc": handleJson,
+  ".*ignore": handleArray,
+  "*.js": handleJs,
+  "*.json": handleJson
 };
 
 const mapType = {
   object: handleJson
 };
-
-async function defaultHandler(file, data) {
-  const basename = path.basename(file);
-  const extname = path.extname(file);
-  const type = typeof data;
-
-  // Extensions come first as they should not be different from the type of
-  // file that they represent.
-  if (extname in mapExtname) {
-    return await map[extname](file, data);
-  }
-
-  // File name handlers come next so that we can add specific handlers for
-  // files with a specific name. Generally this is for files tha tdo not
-  // have an extension. These types of files can have different types of
-  // content within them and there's no way to tell other than hardcoding.
-  if (basename in mapBasename) {
-    return await map[basename](file, data);
-  }
-
-  // We fallback to trying to handle based on value type.
-  if (type in mapType) {
-    return await map[type](file, data);
-  }
-
-  // If all else fails, we try and handle it as a string.
-  return await handleString(file, data);
-}
 
 function getHandler() {
   return currentHandler;
@@ -92,7 +61,26 @@ function setHandler(handler) {
   currentHandler = handler;
 }
 
-setHandler(defaultHandler);
+setHandler(async function defaultHandler(file, data) {
+  const basename = path.basename(file);
+  const extname = path.extname(file);
+  const type = typeof data;
+
+  // Glob matching takes precedence. First come, first serve.
+  for (const glob in mapGlob) {
+    if (minimatch(file, glob)) {
+      return await mapGlob[glob](file, data);
+    }
+  }
+
+  // We fallback to trying to handle based on value type.
+  if (type in mapType) {
+    return await map[type](file, data);
+  }
+
+  // If all else fails, we try and handle it as a string.
+  return await handleString(file, data);
+});
 
 module.exports = {
   getHandler,
