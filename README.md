@@ -29,9 +29,9 @@ Conartist can be configured by any one of the following:
 - `.conartistrc.js`
 - `.conartist.config.js`
 
-Any file that ends with `.js` can export a `function` or `object`. If it is a
-function, any options you pass to the `conartist` command is passed into the
-function as an object.
+If you use a `.js` file, you will be able to have finer-grained control if you
+require it. See the secion on [custom file handlers](#custom-file-handlers) for
+more information.
 
 ## Usage
 
