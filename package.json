@@ -38,5 +38,8 @@
   "bugs": {
     "url": "https://github.com/treshugart/conartist/issues"
   },
-  "homepage": "https://github.com/treshugart/conartist#readme"
+  "homepage": "https://github.com/treshugart/conartist#readme",
+  "@pika/pack": {
+    "pipeline": []
+  }
 }
