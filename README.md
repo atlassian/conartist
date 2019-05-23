@@ -57,8 +57,8 @@ The following are the built-in - and exported - file handlers.
 
 - [`handeArray`](#async-handlearrayfile-data)
 - [`handleJs`](#async-handlejsfile-data)
-- [`handleJson`](#async-handlejson-data)
-- [`handleString`](#async-handlestring-data)
+- [`handleJson`](#async-handlejsonfile-data)
+- [`handleString`](#async-handlestringfile-data)
 
 These handlers will handle the following file patterns:
 
