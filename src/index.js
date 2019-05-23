@@ -1,4 +1,6 @@
 module.exports = Object.assign(
   {},
-  ...["config", "format", "handler", "read", "sync"].map(m => require(`./${m}`))
+  ...["config", "format", "handler", "read", "process"].map(m =>
+    require(`./${m}`)
+  )
 );

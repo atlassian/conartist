@@ -17,9 +17,9 @@ test("exports", () => {
     handleJson: "function",
     handleString: "function",
     loadFile: "function",
+    process: "function",
     readFile: "function",
     readJson: "function",
-    setHandler: "function",
-    sync: "function"
+    setHandler: "function"
   });
 });

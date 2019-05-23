@@ -2,7 +2,7 @@ const fs = require("fs-extra");
 const { getConfig } = require("./config");
 const { getHandler } = require("./handler");
 
-async function sync(opts) {
+async function process(opts) {
   const config = await getConfig(opts);
   const handler = getHandler();
   Object.keys(config).forEach(async file => {
@@ -15,5 +15,5 @@ async function sync(opts) {
 }
 
 module.exports = {
-  sync
+  process
 };

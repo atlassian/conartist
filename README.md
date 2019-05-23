@@ -193,9 +193,9 @@ Formats JavaScript code using Prettier and the `babel` parser.
 
 Formats JSON using `JSON.stringify(json, null, 2)`.
 
-### Syncing
+### Processing
 
-#### `async sync(config)`
+#### `async process(config)`
 
 Syncs the configuration with what's on the file system using the file handlers.
 
