@@ -143,34 +143,9 @@ module.exports = {
 
 All exported API points are documented below.
 
-### Configuration
+### Global file handling
 
-#### `async getConfig`
-
-Returns the current configuration from the configuration file.
-
-### File utils
-
-#### `filePath(file)`
-
-Returns the full path to the file relative to the current working directory.
-
-#### `async loadFile(file)`
-
-Loads a file using `require` relative to the `cwd`. If it does not exist, it
-returns `null`.
-
-#### `async readFile(file)`
-
-Reads a file into a `string` relative to the `cwd`. If it does not exist, it
-returns `null`.
-
-#### `async readJson(file)`
-
-Reads a file into JSON relative to the `cwd`. If it does not exist, it returns
-`null`.
-
-### File handling
+APIs for handling all files.
 
 #### `getHandler()`
 
@@ -182,7 +157,9 @@ Sets a new file handler, overwriting any current handler. If you require
 existing handler functionality, make sure you call `getHandler()` and callback
 to it.
 
-### File handlers
+### File-specific handling
+
+APIs for handling specific files.
 
 #### `async handleArray(file, arr)`
 
@@ -204,7 +181,9 @@ Handles JSON. It can be a `string` or anyting that `JSON.parse()` handles.
 Handles a `string` by ensuring that whatever is passed in is converted to a
 `string`.
 
-### Formatters
+### Formatting
+
+APIs for formatting data types.
 
 ### `formatCode`
 
@@ -219,3 +198,30 @@ Formats JSON using `JSON.stringify(json, null, 2)`.
 #### `async sync(config)`
 
 Syncs the configuration with what's on the file system using the file handlers.
+
+### Utils
+
+General utils for loading configs and reading files.
+
+#### `async getConfig`
+
+Returns the current configuration from the configuration file.
+
+#### `filePath(file)`
+
+Returns the full path to the file relative to the current working directory.
+
+#### `async loadFile(file)`
+
+Loads a file using `require` relative to the `cwd`. If it does not exist, it
+returns `null`.
+
+#### `async readFile(file)`
+
+Reads a file into a `string` relative to the `cwd`. If it does not exist, it
+returns `null`.
+
+#### `async readJson(file)`
+
+Reads a file into JSON relative to the `cwd`. If it does not exist, it returns
+`null`.
