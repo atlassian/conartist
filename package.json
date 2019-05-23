@@ -1,7 +1,7 @@
 {
   "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "jest": "^21.1.0"
+    "jest": "^21.1.0",
+    "np": "^5.0.2"
   },
   "main": "./src/index.js",
   "scripts": {
@@ -38,8 +38,5 @@
   "bugs": {
     "url": "https://github.com/treshugart/conartist/issues"
   },
-  "homepage": "https://github.com/treshugart/conartist#readme",
-  "@pika/pack": {
-    "pipeline": []
-  }
+  "homepage": "https://github.com/treshugart/conartist#readme"
 }
