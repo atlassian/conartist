@@ -55,12 +55,10 @@ configuration has in it.
 
 The following are the built-in - and exported - file handlers.
 
-- `handeArray` - existing file is merged with config and entries are deduped.
-- `handleJs` - if `data` is a `string`, it uses `handleString`. If it's an
-  `object` it uses `handleJson`. File is created with `module.exports` set to
-  the handled value.
-- `handleJson` - existing file is merged with config using `lodash/merge`.
-- `handleString` - existing file takes precedence over config value.
+- [`handeArray`](#async-handlearrayfile-data)
+- [`handleJs`](#async-handlejsfile-data)
+- [`handleJson`](#async-handlejson-data)
+- [`handleString`](#async-handlestring-data)
 
 These handlers will handle the following file patterns:
 
@@ -258,7 +256,7 @@ getHandler() === customHandler;
 
 APIs for handling specific files.
 
-#### `async handleArray(file, arr)`
+#### `async handleArray(file, data)`
 
 Handles an array.
 
@@ -269,7 +267,7 @@ const { handleArray } = require("conartist");
 await handleArray("somefile", ["my", "array"]);
 ```
 
-#### `async handleJs(file, code)`
+#### `async handleJs(file, data)`
 
 Handles JS code depending on the value type and applies it as `module.exports`.
 
@@ -283,7 +281,7 @@ const { handleJs } = require("conartist");
 await handleJs("somefile", { some: "data" });
 ```
 
-#### `async handleJson(file, json)`
+#### `async handleJson(file, data)`
 
 Handles JSON. It can be a `string` or anyting that `JSON.parse()` handles.
 
@@ -294,7 +292,7 @@ const { handleJson } = require("conartist");
 await handleJson("somefile", { some: "data" });
 ```
 
-#### `async handleString(file, str)`
+#### `async handleString(file, data)`
 
 Handles a `string` by ensuring that whatever is passed in is converted to a
 `string`.
