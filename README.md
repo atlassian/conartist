@@ -365,7 +365,7 @@ await getConfig();
 
 #### `filePath(file)`
 
-Returns the full path to the file relative to the current working directory.
+Returns the full path to the file relative to the `cwd`.
 
 ```js
 const { filePath } = require("conartist");
