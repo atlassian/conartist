@@ -196,8 +196,7 @@ module.exports = {
 ```
 
 Another use case is composing files together into another file. This can be
-useful if you have custom configurations that you want to compose together into
-a single configuration.
+useful if you have custom files that you want to compose together into a file.
 
 The following example will take data read from a `package.json` and generate a
 `README.md` from it:
@@ -207,7 +206,8 @@ const { loadJson } = require("conartist");
 const outdent = require("outdent");
 
 module.exports = {
-  "README.md": file => {
+  "README.md": async file => {
+    const pkg = await loadJson("package.json");
     return outdent`
       # ${pkg.name}
 
@@ -216,6 +216,8 @@ module.exports = {
   }
 };
 ```
+
+_As shown above, you can also use `async` functions for file handlers!_
 
 ## API
 
