@@ -138,3 +138,84 @@ module.exports = {
   ".gitignore": (file, data) => data.join("\n")
 };
 ```
+
+## API
+
+All exported API points are documented below.
+
+### Configuration
+
+#### `async getConfig`
+
+Returns the current configuration from the configuration file.
+
+### File utils
+
+#### `filePath(file)`
+
+Returns the full path to the file relative to the current working directory.
+
+#### `async loadFile(file)`
+
+Loads a file using `require` relative to the `cwd`. If it does not exist, it
+returns `null`.
+
+#### `async readFile(file)`
+
+Reads a file into a `string` relative to the `cwd`. If it does not exist, it
+returns `null`.
+
+#### `async readJson(file)`
+
+Reads a file into JSON relative to the `cwd`. If it does not exist, it returns
+`null`.
+
+### File handling
+
+#### `getHandler()`
+
+Returns the current file handler.
+
+#### `setHandler(handler)`
+
+Sets a new file handler, overwriting any current handler. If you require
+existing handler functionality, make sure you call `getHandler()` and callback
+to it.
+
+### File handlers
+
+#### `async handleArray(file, arr)`
+
+Handles an array.
+
+#### `async handleJs(file, code)`
+
+Handles JS code depending on the value type and applies it as `module.exports`.
+
+- `typeof` `string` - it is formatted and exported.
+- `typeof` `object` - it is stringified, formatted and exported.
+
+#### `async handleJson(file, json)`
+
+Handles JSON. It can be a `string` or anyting that `JSON.parse()` handles.
+
+#### `async handleString(file, str)`
+
+Handles a `string` by ensuring that whatever is passed in is converted to a
+`string`.
+
+### Formatters
+
+### `formatCode`
+
+Formats JavaScript code using Prettier and the `babel` parser.
+
+### `formatJson`
+
+Formats JSON using `JSON.stringify(json, null, 2)`.
+
+### Syncing
+
+#### `async sync(config)`
+
+Syncs the configuration with what's on the file system using the file handlers.

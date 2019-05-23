@@ -32,7 +32,8 @@ async function handleJs(file, data) {
 
   if (typeof data === "object") {
     const curr = loadFile(file);
-    return formatCode(`module.exports = ${formatJson(merge(data, curr))};`);
+    data = typeof data === "string" ? JSON.parse(data) : data;
+    return formatCode(`module.exports = ${formatCode(merge(data, curr))};`);
   }
 }
 
