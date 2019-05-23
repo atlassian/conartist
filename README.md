@@ -94,12 +94,12 @@ types of handlers you can use:
 
 Global file handlers handle all files in your configuration file. When you set a
 global handler, it overwrites the existing handler, so you must call
-`getHandler()` and callback to it if you want to retain its functionality around
-your new one.
+[`getHandler`](#gethandler) and callback to it if you want to retain its
+functionality around your new one.
 
-You set a new handler by calling `setHandler(handler)`. You are responsible for
-returing the string that will be output to the file and for handling all types
-of files that you might set in your configuration.
+You set a new handler by calling [`setHandler`](#sethandler-handler). You are
+responsible for returing the string that will be output to the file and for
+handling all types of files that you might set in your configuration.
 
 ```js
 // conartist.config.js
