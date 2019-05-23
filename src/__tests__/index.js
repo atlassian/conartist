@@ -7,6 +7,7 @@ test("exports", () => {
       return prev;
     }, {})
   ).toEqual({
+    filePath: "function",
     formatCode: "function",
     formatJson: "function",
     getConfig: "function",
@@ -15,6 +16,7 @@ test("exports", () => {
     handleJs: "function",
     handleJson: "function",
     handleString: "function",
+    loadFile: "function",
     readFile: "function",
     readJson: "function",
     setHandler: "function",

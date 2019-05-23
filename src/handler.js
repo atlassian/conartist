@@ -1,4 +1,5 @@
 const fs = require("fs-extra");
+const loMerge = require("lodash/merge");
 const loUniq = require("lodash/uniq");
 const minimatch = require("minimatch");
 const path = require("path");
@@ -6,6 +7,10 @@ const { formatCode, formatJson } = require("./format");
 const { readFile, readJson } = require("./read");
 
 let currentHandler;
+
+function merge(...args) {
+  return loMerge({}, ...args);
+}
 
 async function handleArray(file, data) {
   const curr = readFile(file).split("\n");
@@ -26,14 +31,15 @@ async function handleJs(file, data) {
   }
 
   if (typeof data === "object") {
-    return formatCode(`module.exports = ${handleJson(data)};`);
+    const curr = loadFile(file);
+    return formatCode(`module.exports = ${formatJson(merge(data, curr))};`);
   }
 }
 
 async function handleJson(file, data) {
   const curr = await readJson(file);
   data = typeof data === "string" ? JSON.parse(data) : data;
-  return formatJson(data);
+  return formatJson(merge(data, curr));
 }
 
 async function handleString(file, data) {
