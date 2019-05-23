@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "jest": "^21.1.0"
   },
   "main": "./src/index.js",
