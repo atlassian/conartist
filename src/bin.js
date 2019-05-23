@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 const meow = require("meow");
-const { sync } = require("./sync");
+const { getConfig, process } = require("./sync");
 
 const cli = meow(`
   Usage
-    conartist <options>
+    conartist
 `);
 
 (async () => {
-  await sync(cli.flags);
+  await sync(await getConfig());
 })();

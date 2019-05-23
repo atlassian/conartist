@@ -1,9 +1,8 @@
 const cosmiconfig = require("cosmiconfig");
 
-async function getConfig(opts) {
+async function getConfig() {
   const search = await cosmiconfig("conartist").search();
-  const config = search ? search.config : {};
-  return typeof config === "function" ? config(opts) : config;
+  return search ? search.config : {};
 }
 
 module.exports = {

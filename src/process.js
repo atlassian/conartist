@@ -2,8 +2,7 @@ const fs = require("fs-extra");
 const { getConfig } = require("./config");
 const { getHandler } = require("./handler");
 
-async function process(opts) {
-  const config = await getConfig(opts);
+async function process(config) {
   const handler = getHandler();
   Object.keys(config).forEach(async file => {
     if (config[file]) {

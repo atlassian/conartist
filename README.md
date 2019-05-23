@@ -231,11 +231,28 @@ APIs for handling all files.
 
 Returns the current file handler.
 
+```js
+const { getHandler } = require("conartist");
+
+// function defaultHandler() { ... }
+getHandler();
+```
+
 #### `setHandler(handler)`
 
 Sets a new file handler, overwriting any current handler. If you require
 existing handler functionality, make sure you call `getHandler()` and callback
 to it.
+
+```js
+const { getHandler, setHandler } = require("conartist");
+
+function customHandler() {}
+setHandler(customHandler);
+
+// true
+getHandler() === customHandler;
+```
 
 ### File-specific handling
 
@@ -245,6 +262,13 @@ APIs for handling specific files.
 
 Handles an array.
 
+```js
+const { handleArray } = require("conartist");
+
+// my\narray
+await handleArray("somefile", ["my", "array"]);
+```
+
 #### `async handleJs(file, code)`
 
 Handles JS code depending on the value type and applies it as `module.exports`.
@@ -252,14 +276,35 @@ Handles JS code depending on the value type and applies it as `module.exports`.
 - `typeof` `string` - it is formatted and exported.
 - `typeof` `object` - it is stringified, formatted and exported.
 
+```js
+const { handleJs } = require("conartist");
+
+// module.exports = { some: "data" };
+await handleJs("somefile", { some: "data" });
+```
+
 #### `async handleJson(file, json)`
 
 Handles JSON. It can be a `string` or anyting that `JSON.parse()` handles.
+
+```js
+const { handleJson } = require("conartist");
+
+// { some: "data" };
+await handleJson("somefile", { some: "data" });
+```
 
 #### `async handleString(file, str)`
 
 Handles a `string` by ensuring that whatever is passed in is converted to a
 `string`.
+
+```js
+const { handleString } = require("conartist");
+
+// [object Object]
+await handleString("somefile", { some: "data" });
+```
 
 ### Formatting
 
@@ -269,15 +314,39 @@ APIs for formatting data types.
 
 Formats JavaScript code using Prettier and the `babel` parser.
 
+```js
+const { formatCode } = require("conartist");
+
+// { some: "data" }
+formatCode('{"some":"data"}');
+```
+
 ### `formatJson`
 
 Formats JSON using `JSON.stringify(json, null, 2)`.
+
+```js
+const { formatJson } = require("conartist");
+
+// {
+//   "some": "data"
+// }
+formatJson('{"some":"data"}');
+```
 
 ### Processing
 
 #### `async process(config)`
 
 Syncs the configuration with what's on the file system using the file handlers.
+
+```js
+const { process } = require("conartist");
+
+await process({
+  "package.json": { name: "my-project" }
+});
+```
 
 ### Utils
 
@@ -287,21 +356,56 @@ General utils for loading configs and reading files.
 
 Returns the current configuration from the configuration file.
 
+```js
+const { getConfig } = require("conartist");
+
+// { ... }
+await getConfig();
+```
+
 #### `filePath(file)`
 
 Returns the full path to the file relative to the current working directory.
+
+```js
+const { filePath } = require("conartist");
+
+// "/path/to/cwd/package.json"
+filePath("package.json");
+```
 
 #### `async loadFile(file)`
 
 Loads a file using `require` relative to the `cwd`. If it does not exist, it
 returns `null`.
 
+```js
+const { loadFile } = require("conartist");
+
+// { ... }
+loadFile("package.json");
+```
+
 #### `async readFile(file)`
 
 Reads a file into a `string` relative to the `cwd`. If it does not exist, it
 returns `null`.
 
+```js
+const { readFile } = require("conartist");
+
+// { ... }
+readFile("package.json");
+```
+
 #### `async readJson(file)`
 
 Reads a file into JSON relative to the `cwd`. If it does not exist, it returns
 `null`.
+
+```js
+const { readJson } = require("conartist");
+
+// { ... }
+readJson("package.json");
+```
