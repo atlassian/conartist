@@ -129,13 +129,91 @@ instead of other data types. The global file handler will then call this and
 write its return value to the file as a priority over any other handler.
 
 _If you overwrite the default global file handler, file-specific handlers will
-not work._
+not work because their behaviour is provided by the default global file handler.
+If you need to override the global file handler and still retain this behaviour,
+it's up to you to implement it or call back to the default global file handler._
 
 ```js
 // conartist.config.js
 
 module.exports = {
   ".gitignore": (file, data) => data.join("\n")
+};
+```
+
+## Use cases
+
+File-specific handlers are a good way to compose in your own behaviour.
+
+### Preventing merging
+
+You may _not_ want to merge JSON data from the config with what's already there,
+by default. To override this, all you need to do is provide a function that
+returns JSON:
+
+```js
+// conartist.config.js
+
+module.exports = {
+  "somefile.json": () => ({
+    my: "data"
+  })
+};
+```
+
+In the above example, the config file would always overwrite any existing
+`somefile.json`. If you would rather the existing file overwrite the config, you
+can do something like:
+
+```js
+const { loadJson } = require("conartist");
+
+module.exports = {
+  "somefile.json": file =>
+    loadJson(file) || {
+      my: "data"
+    }
+};
+```
+
+### Custom merging
+
+If you would prefer to implement custom merging, you might do something like:
+
+```js
+const { loadJson } = require("conartist");
+
+module.exports = {
+  "somefile.json": file => ({
+    // Putting your data here means that it can
+    // be overridden by existing data.
+    my: "data",
+
+    // loadJson returns null if no file is found.
+    ...(loadJson(file) || {})
+  })
+};
+```
+
+Another use case is composing files together into another file. This can be
+useful if you have custom configurations that you want to compose together into
+a single configuration.
+
+The following example will take data read from a `package.json` and generate a
+`README.md` from it:
+
+```js
+const { loadJson } = require("conartist");
+const outdent = require("outdent");
+
+module.exports = {
+  "README.md": file => {
+    return outdent`
+      # ${pkg.name}
+
+      > ${pkg.description}
+    `;
+  }
 };
 ```
 

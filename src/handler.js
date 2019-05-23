@@ -57,7 +57,8 @@ const mapGlob = {
 };
 
 const mapType = {
-  object: handleJson
+  object: handleJson,
+  string: handleString
 };
 
 function getHandler() {
@@ -71,22 +72,28 @@ function setHandler(handler) {
 setHandler(async function defaultHandler(file, data) {
   const basename = path.basename(file);
   const extname = path.extname(file);
-  const type = typeof data;
 
-  // Glob matching takes precedence. First come, first serve.
-  for (const glob in mapGlob) {
-    if (minimatch(file, glob)) {
-      return await mapGlob[glob](file, data);
+  // File-specific handlers (functions) override glob-based handlers.
+  if (typeof data === "function") {
+    data = data(file);
+  } else {
+    for (const glob in mapGlob) {
+      if (minimatch(file, glob)) {
+        data = await mapGlob[glob](file, data);
+        break;
+      }
     }
   }
 
-  // We fallback to trying to handle based on value type.
-  if (type in mapType) {
-    return await map[type](file, data);
+  // All types of data returned is then passed through a type handler to
+  // ensure that we get a string.
+  if (typeof data in mapType) {
+    return await map[typeof data](file, data);
   }
 
-  // If all else fails, we try and handle it as a string.
-  return await handleString(file, data);
+  throw new Error(
+    `Unable to handle data of type "${typeof data}" for "${file}".`
+  );
 });
 
 module.exports = {
