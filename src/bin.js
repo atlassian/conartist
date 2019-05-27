@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const meow = require("meow");
-const { getConfig, process } = require("./sync");
+const { getConfig, process } = require("./process");
 
 const cli = meow(`
   Usage
@@ -9,5 +9,5 @@ const cli = meow(`
 `);
 
 (async () => {
-  await sync(await getConfig());
+  await process(await getConfig());
 })();
