@@ -23,7 +23,6 @@ test("[throws]", async () => {
 });
 
 test("() => []", async () => {
-  const item = { data: "", name: "name" };
   expect(await getConfig(o => [o], item)).toEqual([item]);
 });
 
