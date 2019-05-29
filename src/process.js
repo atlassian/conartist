@@ -4,11 +4,11 @@ const { getHandler } = require("./handler");
 
 async function process(config) {
   const handler = getHandler();
-  Object.keys(config).forEach(async file => {
-    if (config[file]) {
-      await fs.outputFile(file, await handler(file, config[file]));
+  config.forEach(async file => {
+    if (file.data) {
+      await fs.outputFile(file.name, await handler(file));
     } else {
-      await fs.remove(file);
+      await fs.remove(file.name);
     }
   });
 }

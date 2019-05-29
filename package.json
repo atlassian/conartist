@@ -19,11 +19,14 @@
     "conartist": "./src/bin.js"
   },
   "dependencies": {
+    "array-flatten": "^2.1.2",
     "cosmiconfig": "^5.2.1",
     "fs-extra": "^8.0.1",
+    "indent-string": "^4.0.0",
     "lodash": "^4.17.11",
     "meow": "^5.0.0",
     "minimatch": "^3.0.4",
+    "outdent": "^0.7.0",
     "prettier": "^1.17.1"
   },
   "repository": {

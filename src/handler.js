@@ -12,15 +12,15 @@ function merge(...args) {
   return loMerge({}, ...args);
 }
 
-async function handleArray(file, data) {
-  const curr = readFile(file).split("\n");
+async function handleArray({ name, data }) {
+  const curr = readFile(name).split("\n");
   data = data.concat(curr);
   data = loUniq(data);
   return data.join("\n");
 }
 
-async function handleJs(file, data) {
-  const curr = readFile(file);
+async function handleJs({ data, name }) {
+  const curr = readFile(name);
 
   if (curr !== null) {
     return curr;
@@ -31,20 +31,20 @@ async function handleJs(file, data) {
   }
 
   if (typeof data === "object") {
-    const curr = loadFile(file);
+    const curr = loadFile(name);
     data = typeof data === "string" ? JSON.parse(data) : data;
     return formatCode(`module.exports = ${formatCode(merge(data, curr))};`);
   }
 }
 
-async function handleJson(file, data) {
-  const curr = await readJson(file);
+async function handleJson({ data, name }) {
+  const curr = await readJson(name);
   data = typeof data === "string" ? JSON.parse(data) : data;
   return formatJson(merge(data, curr));
 }
 
-async function handleString(file, data) {
-  const curr = await readFile(file);
+async function handleString({ data, name }) {
+  const curr = await readFile(name);
   return `${curr || data}`;
 }
 
@@ -69,17 +69,17 @@ function setHandler(handler) {
   currentHandler = handler;
 }
 
-setHandler(async function defaultHandler(file, data) {
-  const basename = path.basename(file);
-  const extname = path.extname(file);
+setHandler(async function defaultHandler({ data, name }) {
+  const basename = path.basename(name);
+  const extname = path.extname(name);
 
   // File-specific handlers (functions) override glob-based handlers.
   if (typeof data === "function") {
-    data = data(file);
+    data = data(name);
   } else {
     for (const glob in mapGlob) {
-      if (minimatch(file, glob)) {
-        data = await mapGlob[glob](file, data);
+      if (minimatch(name, glob)) {
+        data = await mapGlob[glob](name, data);
         break;
       }
     }
@@ -88,11 +88,11 @@ setHandler(async function defaultHandler(file, data) {
   // All types of data returned is then passed through a type handler to
   // ensure that we get a string.
   if (typeof data in mapType) {
-    return await map[typeof data](file, data);
+    return await map[typeof data]({ name, data });
   }
 
   throw new Error(
-    `Unable to handle data of type "${typeof data}" for "${file}".`
+    `Unable to handle data of type "${typeof data}" for "${name}".`
   );
 });
 
