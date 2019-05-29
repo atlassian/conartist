@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "jest": "^21.1.0",
+    "jest": "^24.8.0",
     "np": "^5.0.2"
   },
   "main": "./src/index.js",

@@ -7,7 +7,6 @@ const isString = require("lodash/isString");
 const outdent = require("outdent");
 
 let currentConfig;
-let currentDepth;
 let parentConfig;
 
 function debug(json) {
@@ -21,9 +20,23 @@ function debug(json) {
   );
 }
 
-function normalize(config) {
-  currentConfig = parentConfig = config;
-  return config.map(item => normalizeItem(item));
+function normalize(conf, opts) {
+  currentConfig = parentConfig = conf;
+
+  if (isFunction(conf)) {
+    conf = conf(opts);
+  }
+
+  if (isArray(conf)) {
+    return conf.map(item => normalizeItem(item));
+  }
+
+  throw new Error(outdent`
+    Expected an array or function that returns an array.
+    
+    Instead we got:
+    ${debug(currentConfig)}
+  `);
 }
 
 function normalizeItem(item, opts) {
@@ -47,7 +60,7 @@ function normalizeItem(item, opts) {
     Returned from:
     ${debug(parentConfig)}
 
-    In config:
+    In configuration:
     ${debug(currentConfig)}
   `);
 }
@@ -57,9 +70,9 @@ async function searchConfig() {
   return search ? search.config : {};
 }
 
-async function getConfig(config) {
-  config = config || (await searchConfig());
-  return normalize(config);
+async function getConfig(conf, opts) {
+  conf = conf || (await searchConfig());
+  return normalize(conf, opts);
 }
 
 module.exports = {
