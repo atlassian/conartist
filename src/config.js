@@ -42,15 +42,12 @@ function normalizeItem(item, opts) {
 
   throw new Error(outdent`
     Invalid item:
-
     ${debug(item)}
 
     Returned from:
-
     ${debug(parentConfig)}
 
     In config:
-
     ${debug(currentConfig)}
   `);
 }
