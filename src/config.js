@@ -2,7 +2,7 @@ const cosmiconfig = require("cosmiconfig");
 const indent = require("indent-string");
 const isArray = require("lodash/isArray");
 const isFunction = require("lodash/isFunction");
-const isObject = require("lodash/isObject");
+const isPlainObject = require("lodash/isPlainObject");
 const isString = require("lodash/isString");
 const outdent = require("outdent");
 
@@ -27,6 +27,12 @@ function normalize(conf, opts) {
     conf = conf(opts);
   }
 
+  if (isPlainObject(conf)) {
+    conf = Object.keys(conf).reduce((prev, curr) => {
+      return prev.concat({ data: conf[curr], name: curr });
+    }, []);
+  }
+
   if (isArray(conf)) {
     return conf.map(item => normalizeItem(item));
   }
@@ -46,7 +52,7 @@ function normalizeItem(item, opts) {
   } else if (isFunction(item)) {
     parentConfig = item;
     return normalizeItem(item(opts));
-  } else if (isObject(item)) {
+  } else if (isPlainObject(item)) {
     return item;
   } else if (isString(item)) {
     parentConfig = item;
