@@ -9,5 +9,5 @@ const cli = meow(`
 `);
 
 (async () => {
-  await process(await getConfig());
+  await process(await getConfig(), cli.flags);
 })();
