@@ -7,19 +7,18 @@ test("exports", () => {
       return prev;
     }, {})
   ).toEqual({
-    filePath: "function",
+    filterWorkspaces: "function",
     formatCode: "function",
     formatJson: "function",
     getConfig: "function",
     getHandler: "function",
+    getWorkspaces: "function",
     handleArray: "function",
     handleJs: "function",
     handleJson: "function",
     handleString: "function",
-    loadFile: "function",
+    normalizeConfig: "function",
     process: "function",
-    readFile: "function",
-    readJson: "function",
     setHandler: "function"
   });
 });

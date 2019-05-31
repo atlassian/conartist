@@ -51,12 +51,12 @@ function normalizeItem(item, opts) {
     return normalizeItem(item[0], item[1]);
   } else if (isFunction(item)) {
     parentConfig = item;
-    return normalizeItem(item(opts), opts);
+    return normalizeItem(item(opts));
   } else if (isPlainObject(item)) {
     return item;
   } else if (isString(item)) {
     parentConfig = item;
-    return normalizeItem(require(item), opts);
+    return normalizeItem(require(item));
   }
 
   throw new Error(outdent`
