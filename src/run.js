@@ -1,4 +1,5 @@
 const commander = require("commander");
+const isFunction = require("lodash/isFunction");
 const path = require("path");
 const { getConfig, normalizeConfig } = require("./config");
 const { filterWorkspaces, getWorkspaces } = require("./workspaces");
@@ -34,10 +35,6 @@ function getOptions(opt) {
     options: [
       ...(opt.options || []),
       {
-        description: "The configuration file to load for this run.",
-        name: "-c, --config <file>"
-      },
-      {
         description:
           "A pattern matching the workspaces the config should be run in.",
         name: "-w, --workspaces <glob>"
@@ -46,20 +43,21 @@ function getOptions(opt) {
   };
 }
 
-async function run(opt, cfg) {
+async function run(opt) {
   const cli = getCli(opt);
   const cwd = process.cwd();
-  const config =
-    cfg || cli.c ? require(path.join(cwd, cli.c)) : await getConfig();
   const workspaces = cli.w
     ? filterWorkspaces(await getWorkspaces(), cli.w)
     : ["."];
+  const config = isFunction(opt.config)
+    ? await opt.config({ cli, cwd, workspaces })
+    : opt.config;
 
   await Promise.all(
-    workspaces.map(async dir => {
-      const cwd = path.resolve(dir);
-      const cfg = normalizeConfig(config, { ...cli, cwd });
-      return await sync(cfg, cwd);
+    workspaces.map(async wsDir => {
+      const wsCwd = path.resolve(wsDir);
+      const wsCfg = normalizeConfig(config, { ...cli, cwd: wsCwd });
+      return await sync(wsCfg, wsCwd);
     })
   );
 }

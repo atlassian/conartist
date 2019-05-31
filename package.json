@@ -13,7 +13,7 @@
     ]
   },
   "name": "conartist",
-  "description": "Keep all of your build configs in sync.",
+  "description": "Declarative project scaffolding and synchronisation.",
   "version": "0.17.3",
   "bin": {
     "conartist": "./src/bin.js"
