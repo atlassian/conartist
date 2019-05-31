@@ -18,7 +18,8 @@ test("exports", () => {
     handleJson: "function",
     handleString: "function",
     normalizeConfig: "function",
-    process: "function",
-    setHandler: "function"
+    run: "function",
+    setHandler: "function",
+    sync: "function"
   });
 });

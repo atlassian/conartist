@@ -2,7 +2,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const { getHandler } = require("./handler");
 
-async function process(cfg, cwd) {
+async function sync(cfg, cwd) {
   const handler = getHandler();
   cfg.forEach(async file => {
     file = {
@@ -18,5 +18,5 @@ async function process(cfg, cwd) {
 }
 
 module.exports = {
-  process
+  sync
 };
