@@ -16,6 +16,14 @@ const cli = meow(
   `
     Usage
       conartist
+
+    Options
+      -c The configuration file to load for this run.
+      -w A pattern matching the workspaces the config should be run in.
+
+    Aliases
+      -c --config
+      -w --workspaces
   `.trimEnd(),
   {
     flags: {
