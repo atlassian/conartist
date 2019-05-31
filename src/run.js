@@ -46,10 +46,11 @@ function getOptions(opt) {
   };
 }
 
-async function run(opt) {
+async function run(opt, cfg) {
   const cli = getCli(opt);
   const cwd = process.cwd();
-  const config = cli.c ? require(path.join(cwd, cli.c)) : await getConfig();
+  const config =
+    cfg || cli.c ? require(path.join(cwd, cli.c)) : await getConfig();
   const workspaces = cli.w
     ? filterWorkspaces(await getWorkspaces(), cli.w)
     : ["."];
