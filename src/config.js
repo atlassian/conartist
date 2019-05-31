@@ -20,7 +20,7 @@ function debug(json) {
   );
 }
 
-function normalize(conf, opts) {
+function normalizeConfig(conf, opts) {
   currentConfig = parentConfig = conf;
 
   if (isFunction(conf)) {
@@ -51,12 +51,12 @@ function normalizeItem(item, opts) {
     return normalizeItem(item[0], item[1]);
   } else if (isFunction(item)) {
     parentConfig = item;
-    return normalizeItem(item(opts));
+    return normalizeItem(item(opts), opts);
   } else if (isPlainObject(item)) {
     return item;
   } else if (isString(item)) {
     parentConfig = item;
-    return normalizeItem(require(item));
+    return normalizeItem(require(item), opts);
   }
 
   throw new Error(outdent`
@@ -71,16 +71,12 @@ function normalizeItem(item, opts) {
   `);
 }
 
-async function searchConfig() {
+async function getConfig() {
   const search = await cosmiconfig("conartist").search();
   return search ? search.config : {};
 }
 
-async function getConfig(conf, opts) {
-  conf = conf || (await searchConfig());
-  return normalize(conf, opts);
-}
-
 module.exports = {
-  getConfig
+  getConfig,
+  normalizeConfig
 };

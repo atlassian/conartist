@@ -1,6 +1,6 @@
 module.exports = Object.assign(
   {},
-  ...["config", "format", "handler", "read", "process"].map(m =>
+  ...["config", "format", "handler", "process", "workspaces"].map(m =>
     require(`./${m}`)
   )
 );

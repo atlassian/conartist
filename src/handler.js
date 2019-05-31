@@ -4,7 +4,6 @@ const loUniq = require("lodash/uniq");
 const minimatch = require("minimatch");
 const path = require("path");
 const { formatCode, formatJson } = require("./format");
-const { readFile, readJson } = require("./read");
 
 let currentHandler;
 
@@ -12,15 +11,23 @@ function merge(...args) {
   return loMerge({}, ...args);
 }
 
+async function readIfExists(file) {
+  return (await fs.exists(file)) ? await fs.readFile(file) : null;
+}
+
+async function requireIfExists(file) {
+  return (await fs.exists(file)) ? require(file) : null;
+}
+
 async function handleArray({ name, data }) {
-  const curr = readFile(name).split("\n");
+  const curr = ((await readIfExists(name)) || "").split("\n");
   data = data.concat(curr);
   data = loUniq(data);
   return data.join("\n");
 }
 
 async function handleJs({ data, name }) {
-  const curr = readFile(name);
+  const curr = await requireIfExists(name);
 
   if (curr !== null) {
     return curr;
@@ -31,20 +38,19 @@ async function handleJs({ data, name }) {
   }
 
   if (typeof data === "object") {
-    const curr = loadFile(name);
     data = typeof data === "string" ? JSON.parse(data) : data;
     return formatCode(`module.exports = ${formatCode(merge(data, curr))};`);
   }
 }
 
 async function handleJson({ data, name }) {
-  const curr = await readJson(name);
+  const curr = await requireIfExists(name);
   data = typeof data === "string" ? JSON.parse(data) : data;
   return formatJson(merge(data, curr));
 }
 
 async function handleString({ data, name }) {
-  const curr = await readFile(name);
+  const curr = await fs.readFile(name);
   return `${curr || data}`;
 }
 
@@ -88,7 +94,7 @@ setHandler(async function defaultHandler({ data, name }) {
   // All types of data returned is then passed through a type handler to
   // ensure that we get a string.
   if (typeof data in mapType) {
-    return await map[typeof data]({ name, data });
+    return await mapType[typeof data]({ name, data });
   }
 
   throw new Error(
