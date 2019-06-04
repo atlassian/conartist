@@ -7,12 +7,10 @@ test("exports", () => {
       return prev;
     }, {})
   ).toEqual({
-    filterWorkspaces: "function",
     formatCode: "function",
     formatJson: "function",
     getConfig: "function",
     getHandler: "function",
-    getWorkspaces: "function",
     handleArray: "function",
     handleJs: "function",
     handleJson: "function",
