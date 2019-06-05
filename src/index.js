@@ -1,7 +1,7 @@
-const { run } = require("./run");
+const { bin } = require("./bin");
 const { sync } = require("./sync");
 
 module.exports = {
-  run,
+  bin,
   sync
 };

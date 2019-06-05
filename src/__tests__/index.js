@@ -7,7 +7,7 @@ test("exports", () => {
       return prev;
     }, {})
   ).toEqual({
-    run: "function",
+    bin: "function",
     sync: "function"
   });
 });

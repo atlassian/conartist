@@ -33,7 +33,7 @@ async function normalizeConfig(conf, opts) {
   }
 
   if (isArray(conf)) {
-    return Promise.all(conf.map(item => await normalizeItem(item)));
+    return Promise.all(conf.map(async item => await normalizeItem(item)));
   }
 
   throw new Error(outdent`
