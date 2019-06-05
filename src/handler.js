@@ -14,7 +14,7 @@ function merge(...args) {
 }
 
 async function readIfExists(file) {
-  return (await fs.exists(file)) ? await fs.readFile(file) : null;
+  return (await fs.exists(file)) ? (await fs.readFile(file)).toString() : null;
 }
 
 async function requireIfExists(file) {
