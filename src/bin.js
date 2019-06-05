@@ -18,7 +18,7 @@ async function getCli(opt) {
   opt = loMerge(optDefault, opt);
 
   // It doesn't seem commander allows you to add a main command description.
-  if (opt.description) {
+  if (opt.description && cli.help) {
     console.log(opt.description, "\n");
   }
 
@@ -29,6 +29,8 @@ async function getCli(opt) {
 
   // Setup options.
   opt.options.forEach(o => cli.option(o.name, o.description, o.default));
+
+  // Parse and run.
   cli.parse(process.argv);
 
   return cli;

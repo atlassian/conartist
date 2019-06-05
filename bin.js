@@ -1,10 +1,22 @@
 #! /usr/bin/env node
 
 const cosmiconfig = require("cosmiconfig");
-const pkg = require("../package.json");
-const { bin } = require("./bin");
+const pkg = require("./package.json");
+const { bin } = require("./src");
 
 (async function main() {
-  const search = await cosmiconfig("conartist").search();
-  await bin({ ...pkg, config: search ? search.config : [] });
+  await bin({
+    ...pkg,
+    async config({ cli }) {
+      const search = await cosmiconfig(cli.config).search();
+      return search ? search.config : [];
+    },
+    options: [
+      {
+        default: "conartist",
+        description: "The name of the config to load with cosmiconfig.",
+        name: "-c, --config <name>"
+      }
+    ]
+  });
 })();
