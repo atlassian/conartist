@@ -1,4 +1,4 @@
-const { normalizeConfig } = require("..");
+const { normalizeConfig } = require("../config");
 
 const item = { data: "", name: "item" };
 

@@ -3,7 +3,7 @@ const loMerge = require("lodash/merge");
 const loUniq = require("lodash/uniq");
 const minimatch = require("minimatch");
 const path = require("path");
-const { formatCode, formatJson } = require("./format");
+const { formatCode, formatJson, formatMd } = require("./format");
 
 let currentHandler;
 
@@ -43,6 +43,10 @@ async function handleJs({ data, name }) {
   }
 }
 
+async function handleMd({ data, name }) {
+  return handleString({ data: formatMd(data), name });
+}
+
 async function handleJson({ data, name }) {
   const curr = await requireIfExists(name);
   data = typeof data === "string" ? JSON.parse(data) : data;
@@ -59,7 +63,10 @@ const mapGlob = {
   ".*rc": handleJson,
   ".*ignore": handleArray,
   "*.js": handleJs,
-  "*.json": handleJson
+  "*.jsx": handleJs,
+  "*.json": handleJson,
+  "*.md": handleMd,
+  "*.mdx": handleMd
 };
 
 const mapType = {
@@ -67,15 +74,7 @@ const mapType = {
   string: handleString
 };
 
-function getHandler() {
-  return currentHandler;
-}
-
-function setHandler(handler) {
-  currentHandler = handler;
-}
-
-setHandler(async function defaultHandler({ data, name }) {
+async function handler({ data, name }) {
   const basename = path.basename(name);
   const extname = path.extname(name);
 
@@ -100,13 +99,8 @@ setHandler(async function defaultHandler({ data, name }) {
   throw new Error(
     `Unable to handle data of type "${typeof data}" for "${name}".`
   );
-});
+}
 
 module.exports = {
-  getHandler,
-  handleArray,
-  handleJs,
-  handleJson,
-  handleString,
-  setHandler
+  handler
 };

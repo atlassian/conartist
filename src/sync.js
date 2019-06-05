@@ -1,9 +1,8 @@
 const fs = require("fs-extra");
 const path = require("path");
-const { getHandler } = require("./handler");
+const { handler } = require("./handler");
 
 async function sync(cfg, cwd) {
-  const handler = getHandler();
   cfg.forEach(async file => {
     file = {
       ...file,

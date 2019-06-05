@@ -8,7 +8,12 @@ function formatJson(json) {
   return JSON.stringify(json, null, 2);
 }
 
+function formatMd(md) {
+  return prettier.format(md, { parser: "markdown" });
+}
+
 module.exports = {
   formatCode,
-  formatJson
+  formatJson,
+  formatMd
 };

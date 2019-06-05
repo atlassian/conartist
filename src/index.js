@@ -1,4 +1,7 @@
-module.exports = Object.assign(
-  {},
-  ...["config", "format", "handler", "run", "sync"].map(m => require(`./${m}`))
-);
+const { run } = require("./run");
+const { sync } = require("./sync");
+
+module.exports = {
+  run,
+  sync
+};
