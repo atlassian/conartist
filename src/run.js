@@ -1,14 +1,21 @@
 const commander = require("commander");
-const isFunction = require("lodash/isFunction");
-const path = require("path");
-const { getConfig, normalizeConfig } = require("./config");
+const getStdin = require("get-stdin");
+const loMerge = require("lodash/merge");
+const { normalizeConfig } = require("./config");
 const { sync } = require("./sync");
 
-function getCli(opt) {
+const optDefault = {
+  config: [],
+  description: "",
+  options: [],
+  version: "0.0.0"
+};
+
+async function getCli(opt) {
   const cli = new commander.Command();
 
   // Normalize options for commander.
-  opt = getOptions(opt);
+  opt = loMerge(optDefault, opt);
 
   // It doesn't seem commander allows you to add a main command description.
   if (opt.description) {
@@ -27,21 +34,18 @@ function getCli(opt) {
   return cli;
 }
 
-function getOptions(opt) {
-  opt = opt || {};
-  return {
-    ...opt,
-    options: opt.options || []
-  };
+async function getCwds() {
+  const std = (await getStdin()).split("\n").filter(Boolean);
+  return std.length ? std : [process.cwd()];
 }
 
 async function run(opt) {
-  const cli = getCli(opt);
-  const cwd = process.cwd();
-  const config = isFunction(opt.config)
-    ? await opt.config({ cli, cwd })
-    : opt.config;
-  await sync(normalizeConfig(config, cli), cwd);
+  const cli = await getCli(opt);
+  const cwds = await getCwds();
+  for (const cwd of cwds) {
+    const config = await normalizeConfig(opt.config, { cli, cwd, opt });
+    await sync(config, cwd);
+  }
 }
 
 module.exports = {

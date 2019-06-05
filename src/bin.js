@@ -1,16 +1,10 @@
 #! /usr/bin/env node
 
-const { getConfig } = require("./config");
+const cosmiconfig = require("cosmiconfig");
+const pkg = require("../package.json");
+const run = require("./run");
 
-require("./run").run({
-  ...require("../package.json"),
-  config: async ({ cli, cwd }) => {
-    return cli.c ? require(path.join(cwd, cli.c)) : await getConfig();
-  },
-  options: [
-    {
-      description: "The configuration file to load for this run.",
-      name: "-c, --config <file>"
-    }
-  ]
-});
+(async function main() {
+  const search = await cosmiconfig("conartist").search();
+  await run({ ...pkg, config: search ? search.config : [] });
+})();

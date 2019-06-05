@@ -1,4 +1,3 @@
-const cosmiconfig = require("cosmiconfig");
 const indent = require("indent-string");
 const isArray = require("lodash/isArray");
 const isFunction = require("lodash/isFunction");
@@ -20,11 +19,11 @@ function debug(json) {
   );
 }
 
-function normalizeConfig(conf, opts) {
+async function normalizeConfig(conf, opts) {
   currentConfig = parentConfig = conf;
 
   if (isFunction(conf)) {
-    conf = conf(opts);
+    conf = await conf(opts);
   }
 
   if (isPlainObject(conf)) {
@@ -34,24 +33,24 @@ function normalizeConfig(conf, opts) {
   }
 
   if (isArray(conf)) {
-    return conf.map(item => normalizeItem(item));
+    return Promise.all(conf.map(item => await normalizeItem(item)));
   }
 
   throw new Error(outdent`
-    Expected an array or function that returns an array.
+    Conartist config is expected to be an array or function that returns an array.
     
     Instead we got:
     ${debug(currentConfig)}
   `);
 }
 
-function normalizeItem(item, opts) {
+async function normalizeItem(item, opts) {
   if (isArray(item)) {
     parentConfig = item;
     return normalizeItem(item[0], item[1]);
   } else if (isFunction(item)) {
     parentConfig = item;
-    return normalizeItem(item(opts));
+    return await normalizeItem(item(opts));
   } else if (isPlainObject(item)) {
     return item;
   } else if (isString(item)) {
@@ -71,12 +70,6 @@ function normalizeItem(item, opts) {
   `);
 }
 
-async function getConfig() {
-  const search = await cosmiconfig("conartist").search();
-  return search ? search.config : {};
-}
-
 module.exports = {
-  getConfig,
   normalizeConfig
 };
