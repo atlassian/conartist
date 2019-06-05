@@ -8,7 +8,11 @@ const optDefault = {
   config: [],
   description: "",
   name: "",
-  options: {},
+  options: {
+    cwd: {
+      description: "Set the cwd."
+    }
+  },
   version: "0.0.0"
 };
 
@@ -42,14 +46,16 @@ function getCli(opt) {
   return cli.flags;
 }
 
-async function getCwds() {
+async function getCwds(cli) {
   const std = (await getStdin()).split("\n").filter(Boolean);
-  return std.length ? std : [process.cwd()];
+  const cwd = cli.cwd ? cli.cwd.split(",") : [];
+  const all = std.concat(cwd);
+  return all.length ? all : ["."];
 }
 
 async function bin(opt) {
   const cli = getCli(opt);
-  const cwds = await getCwds();
+  const cwds = await getCwds(cli);
   for (const cwd of cwds) {
     const config = await normalizeConfig(opt.config, { cli, cwd, opt });
     await sync(config, cwd);
