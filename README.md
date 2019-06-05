@@ -1,17 +1,16 @@
 # Conartist
 
 Hate managing all your different config files across all your different
-repositories? Great. Step into my office.
+repositories?
 
 > Conartist is a tool that gives you a way to manage all of your config files
 > from a single source of truth. Not only will it scaffold them out, it can also
-> keep them in sync even if you modify them manually.
+> keep them in sync, even if you modify them manually.
 
-Major use cases:
-
-- Keeping separate repos in sync.
-- Keeping monorepo packages in sync.
-- Scaffolding out new projects.
+- ✋ Keeping separate repos in sync.
+- 📦 Keeping monorepo packages in sync.
+- 🏗 Scaffolding out new projects.
+- 📐 Works well with [`workspaces`](https://github.com/treshugart/jobsite).
 
 ## Install
 
@@ -29,9 +28,8 @@ Conartist can be configured by any one of the following:
 - `.conartistrc.js`
 - `.conartist.config.js`
 
-If you use a `.js` file, you will be able to have finer-grained control if you
-require it. See the secion on [custom file handlers](#custom-file-handlers) for
-more information.
+_If you use a `.js` file, you will be able to have finer-grained control over
+your configuration. More on this later._
 
 ## Usage
 
@@ -40,7 +38,7 @@ If you put the following in a `package.json`.
 ```json
 {
   "conartist": {
-    ".gitignore": ["*.log", "node_modules"],
+    ".gitignore": "*.log\nnode_modules",
     ".nvmrc": "10.9.0",
     ".travis.yml": "language: node_js"
   }
@@ -51,359 +49,119 @@ Running `$ conartist` will create the specified files relative to the `cwd`.
 This is great for scaffolding out a project or keeping it in sync with what the
 configuration has in it.
 
-## Built-in file handlers
-
-The following are the built-in - and exported - file handlers.
-
-- [`handeArray`](#async-handlearrayfile-data)
-- [`handleJs`](#async-handlejsfile-data)
-- [`handleJson`](#async-handlejsonfile-data)
-- [`handleString`](#async-handlestringfile-data)
-
-These handlers will handle the following file patterns:
-
-```js
-const mapGlob = {
-  ".nvmrc": handleString,
-  ".*rc": handleJson,
-  ".*ignore": handleArray,
-  "*.js": handleJs,
-  "*.json": handleJson
-};
-```
-
-And attempt to handle the following value types:
-
-```js
-const mapType = {
-  object: handleJson
-};
-```
-
-If a handler cannot be found, it defaults to using `handleString`.
-
-## Custom file handlers
-
-Custom file handlers require a `.js` file in order to be applied. There are two
-types of handlers you can use:
-
-- Global
-- File-specific
-
-### Global file handlers
-
-Global file handlers handle all files in your configuration file. When you set a
-global handler, it overwrites the existing handler, so you must call
-[`getHandler`](#gethandler) and callback to it if you want to retain its
-functionality around your new one.
-
-You set a new handler by calling [`setHandler`](#sethandler-handler). You are
-responsible for returing the string that will be output to the file and for
-handling all types of files that you might set in your configuration.
-
-```js
-// conartist.config.js
-
-const { getHandler, setHandler } = require("conartist");
-
-const previousHandler = getHandler();
-
-setHandler(function myCustomHandler(file, data) {
-  if (file === ".gitignore") {
-    return data.join("\n");
-  }
-  return previousHandler(file, data);
-});
-
-module.exports = {
-  ".gitignore": ["*.log", "node_modules"]
-};
-```
-
-### File-specific handlers
-
-File-specific handlers are applied as a function to the corresponding file
-instead of other data types. The global file handler will then call this and
-write its return value to the file as a priority over any other handler.
-
-_If you overwrite the default global file handler, file-specific handlers will
-not work because their behaviour is provided by the default global file handler.
-If you need to override the global file handler and still retain this behaviour,
-it's up to you to implement it or call back to the default global file handler._
-
-```js
-// conartist.config.js
-
-module.exports = {
-  ".gitignore": (file, data) => data.join("\n")
-};
-```
-
-## Use cases
-
-File-specific handlers are a good way to compose in your own behaviour.
-
-### Preventing merging
-
-You may _not_ want to merge JSON data from the config with what's already there,
-by default. To override this, all you need to do is provide a function that
-returns JSON:
-
-```js
-// conartist.config.js
-
-module.exports = {
-  "somefile.json": () => ({
-    my: "data"
-  })
-};
-```
-
-In the above example, the config file would always overwrite any existing
-`somefile.json`. If you would rather the existing file overwrite the config, you
-can do something like:
-
-```js
-const { loadJson } = require("conartist");
-
-module.exports = {
-  "somefile.json": file =>
-    loadJson(file) || {
-      my: "data"
-    }
-};
-```
-
-### Custom merging
-
-If you would prefer to implement custom merging, you might do something like:
-
-```js
-const { loadJson } = require("conartist");
-
-module.exports = {
-  "somefile.json": file => ({
-    // Putting your data here means that it can
-    // be overridden by existing data.
-    my: "data",
-
-    // loadJson returns null if no file is found.
-    ...(loadJson(file) || {})
-  })
-};
-```
-
-Another use case is composing files together into another file. This can be
-useful if you have custom files that you want to compose together into a file.
-
-The following example will take data read from a `package.json` and generate a
-`README.md` from it:
-
-```js
-const { loadJson } = require("conartist");
-const outdent = require("outdent");
-
-module.exports = {
-  "README.md": async file => {
-    const pkg = await loadJson("package.json");
-    return outdent`
-      # ${pkg.name}
-
-      > ${pkg.description}
-    `;
-  }
-};
-```
-
-_As shown above, you can also use `async` functions for file handlers!_
-
 ## API
 
 All exported API points are documented below.
 
-### Global file handling
+### `run(opt)` - automated CLI
 
-APIs for handling all files.
+The `run` function automates a lot of the boilerplate in creating a CLI tool.
+It's intended to jump-start your ability for you to create a Conartist config
+that can be run by simply typing `npx your-command`. This idea was borrowed from
+https://www.npmjs.com/package/travis.yml.
 
-#### `getHandler()`
+A big bonus of doing things this way is that your consumers don't need
+`conartist` to be installed and serveral commands can work in harmony even if
+they depend on different versions of `conartist`.
 
-Returns the current file handler.
+The following example creates a `npx license-mit` command.
 
-```js
-const { getHandler } = require("conartist");
+#### `package.json`
 
-// function defaultHandler() { ... }
-getHandler();
+```json
+{
+  "name": "license-mit",
+  "description": "Creates and maintains an MIT license in your projects.",
+  "author": "Your Name <you@yourdomain.com>",
+  "version": "1.0.0",
+  "bin": "bin"
+}
 ```
 
-#### `setHandler(handler)`
-
-Sets a new file handler, overwriting any current handler. If you require
-existing handler functionality, make sure you call `getHandler()` and callback
-to it.
+#### `bin.js`
 
 ```js
-const { getHandler, setHandler } = require("conartist");
+#! /usr/bin/env node
 
-function customHandler() {}
-setHandler(customHandler);
+const { run } = require("conartist");
+const pkg = require("./package.json");
 
-// true
-getHandler() === customHandler;
-```
+run({
+  ...pkg,
+  conartist: [
+    {
+      name: "LICENSE",
+      data: `
+        Copyright 2019 ${pkg.author}
 
-### File-specific handling
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-APIs for handling specific files.
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-#### `async handleArray(file, data)`
-
-Handles an array.
-
-```js
-const { handleArray } = require("conartist");
-
-// my\narray
-await handleArray("somefile", ["my", "array"]);
-```
-
-#### `async handleJs(file, data)`
-
-Handles JS code depending on the value type and applies it as `module.exports`.
-
-- `typeof` `string` - it is formatted and exported.
-- `typeof` `object` - it is stringified, formatted and exported.
-
-```js
-const { handleJs } = require("conartist");
-
-// module.exports = { some: "data" };
-await handleJs("somefile", { some: "data" });
-```
-
-#### `async handleJson(file, data)`
-
-Handles JSON. It can be a `string` or anyting that `JSON.parse()` handles.
-
-```js
-const { handleJson } = require("conartist");
-
-// { some: "data" };
-await handleJson("somefile", { some: "data" });
-```
-
-#### `async handleString(file, data)`
-
-Handles a `string` by ensuring that whatever is passed in is converted to a
-`string`.
-
-```js
-const { handleString } = require("conartist");
-
-// [object Object]
-await handleString("somefile", { some: "data" });
-```
-
-### Formatting
-
-APIs for formatting data types.
-
-### `formatCode`
-
-Formats JavaScript code using Prettier and the `babel` parser.
-
-```js
-const { formatCode } = require("conartist");
-
-// { some: "data" }
-formatCode('{"some":"data"}');
-```
-
-### `formatJson`
-
-Formats JSON using `JSON.stringify(json, null, 2)`.
-
-```js
-const { formatJson } = require("conartist");
-
-// {
-//   "some": "data"
-// }
-formatJson('{"some":"data"}');
-```
-
-### Processing
-
-#### `async process(config)`
-
-Syncs the configuration with what's on the file system using the file handlers.
-
-```js
-const { process } = require("conartist");
-
-await process({
-  "package.json": { name: "my-project" }
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      `
+    }
+  ]
 });
 ```
 
-### Utils
+#### Resulting `LICENSE`
 
-General utils for loading configs and reading files.
+```
+Copyright 2019 Your Name <you@yourdomain.com>
 
-#### `async getConfig`
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-Returns the current configuration from the configuration file.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-```js
-const { getConfig } = require("conartist");
-
-// { ... }
-await getConfig();
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-#### `filePath(file)`
+#### Testing
 
-Returns the full path to the file relative to the `cwd`.
+You can now test to see if your command works by running `npx .`.
 
-```js
-const { filePath } = require("conartist");
+#### Built-in features
 
-// "/path/to/cwd/package.json"
-filePath("package.json");
+The `run` function uses [`meow`](https://github.com/sindresorhus/meow) under the
+hood, so it automates quite a bit for you.
+
+Help:
+
+```sh
+$ npx . --help
+
+  Creates and maintains an MIT license in your projects.
+
+  Usage
+    $ license-mit
+
+  Options
+    --cwd Set the cwd.
+
 ```
 
-#### `async loadFile(file)`
+Options:
 
-Loads a file using `require` relative to the `cwd`. If it does not exist, it
-returns `null`.
+- `[stdin]` A newline separated list of directories to run the config in.
+- `--cwd` A comma separated list of directories to run the config in.
 
-```js
-const { loadFile } = require("conartist");
+_Both `[stdin]` and `--cwd` are supported by default as a way to either pipe or
+supply paths to `conartist`. If both are provided they are merged together and
+it is run on all provided paths. If none are provided, then `.` is used._
 
-// { ... }
-loadFile("package.json");
+Version:
+
+```sh
+$ npx . --version
+1.0.0
 ```
 
-#### `async readFile(file)`
+#### Publishing and running
 
-Reads a file into a `string` relative to the `cwd`. If it does not exist, it
-returns `null`.
+You can now run [`np`](https://github.com/sindresorhus/np) and your command is
+runnable via `npx license-mit` anywhere.
 
-```js
-const { readFile } = require("conartist");
+### `sync(opt, cwd)` - programmatic config application
 
-// { ... }
-readFile("package.json");
-```
-
-#### `async readJson(file)`
-
-Reads a file into JSON relative to the `cwd`. If it does not exist, it returns
-`null`.
-
-```js
-const { readJson } = require("conartist");
-
-// { ... }
-readJson("package.json");
-```
+TBD

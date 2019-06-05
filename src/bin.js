@@ -1,11 +1,13 @@
 const meow = require("meow");
 const getStdin = require("get-stdin");
+const loPickBy = require("lodash/pickBy");
+const loMap = require("lodash/map");
 const loMerge = require("lodash/merge");
 const { normalizeConfig } = require("./config");
 const { sync } = require("./sync");
 
 const optDefault = {
-  config: [],
+  conartist: [],
   description: "",
   name: "",
   options: {
@@ -18,28 +20,26 @@ const optDefault = {
 
 function getCli(opt) {
   opt = loMerge(optDefault, opt);
-  const flags = Object.keys(opt.options);
+  const flags = loPickBy(opt.options, Boolean);
+  const flagsExist = Object.keys(flags).length;
   const cli = meow(
     `
       Usage
         $ ${opt.name}
     
-      ${flags.length ? "Options" : ""}
-        ${flags
-          .reduce((prev, curr) => {
-            const f = opt.options[curr];
-            const alias = f.alias ? `, -${f.alias}` : "";
-            const defaultValue = f.default
-              ? ` (default: ${JSON.stringify(f.default)})`
-              : "";
-            const description = f.description ? ` ${f.description}` : "";
-            const name = `--${curr}`;
-            return prev.concat(name + alias + description + defaultValue);
-          }, [])
-          .join("\n        ")}
+      ${flagsExist ? "Options" : ""}
+        ${loMap(flags, (flag, name) => {
+          const alias = flag.alias ? `, -${flag.alias}` : "";
+          const defaultValue = flag.default
+            ? ` (default: ${JSON.stringify(flag.default)})`
+            : "";
+          const description = flag.description ? ` ${flag.description}` : "";
+          const namePrefixed = `--${name}`;
+          return namePrefixed + alias + description + defaultValue;
+        }).join("\n        ")}
     `.trimEnd(),
     {
-      flags: opt.options,
+      flags,
       version: opt.version
     }
   );
@@ -57,7 +57,7 @@ async function bin(opt) {
   const cli = getCli(opt);
   const cwds = await getCwds(cli);
   for (const cwd of cwds) {
-    const config = await normalizeConfig(opt.config, { cli, cwd, opt });
+    const config = await normalizeConfig(opt.conartist, { cli, cwd, opt });
     await sync(config, cwd);
   }
 }
