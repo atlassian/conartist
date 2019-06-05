@@ -1,8 +1,10 @@
 const fs = require("fs-extra");
+const isFunction = require("lodash/isFunction");
 const loMerge = require("lodash/merge");
 const loUniq = require("lodash/uniq");
 const minimatch = require("minimatch");
 const path = require("path");
+const stripIndent = require("strip-indent");
 const { formatCode, formatJson, formatMd } = require("./format");
 
 let currentHandler;
@@ -19,86 +21,82 @@ async function requireIfExists(file) {
   return (await fs.exists(file)) ? require(file) : null;
 }
 
-async function handleArray({ name, data }) {
-  const curr = ((await readIfExists(name)) || "").split("\n");
-  data = data.concat(curr);
+async function handleArray(file) {
+  let data;
+  const curr = ((await readIfExists(file.name)) || "").split("\n");
+  data = file.data.concat(curr);
   data = loUniq(data);
-  return data.join("\n");
+  return data.filter(Boolean).join("\n");
 }
 
-async function handleJs({ data, name }) {
-  const curr = await requireIfExists(name);
-
-  if (curr !== null) {
-    return curr;
-  }
-
-  if (typeof data === "string") {
-    return formatCode(data);
-  }
-
-  if (typeof data === "object") {
-    data = typeof data === "string" ? JSON.parse(data) : data;
-    return formatCode(`module.exports = ${formatCode(merge(data, curr))};`);
-  }
+async function handleJs(file) {
+  const curr = (await readIfExists(file.name)) || file.data;
+  const data = file.overwrite ? file.data : curr;
+  return formatCode(data);
 }
 
-async function handleMd({ data, name }) {
-  return handleString({ data: formatMd(data), name });
+async function handleJson(file) {
+  const curr = (await requireIfExists(file.name)) || file.data;
+  const data = file.overwrite
+    ? file.data
+    : file.merge
+    ? merge(curr, file.data)
+    : curr;
+  return JSON.stringify(data, null, 2);
 }
 
-async function handleJson({ data, name }) {
-  const curr = await requireIfExists(name);
-  data = typeof data === "string" ? JSON.parse(data) : data;
-  return formatJson(merge(data, curr));
+async function handleMd(file) {
+  return formatMd(await handleString(file));
 }
 
-async function handleString({ data, name }) {
-  const curr = await fs.readFile(name);
-  return `${curr || data}`;
+async function handleString(file) {
+  const curr = (await readIfExists(file.name)) || file.data;
+  const data = file.overwrite ? file.data : curr;
+  return stripIndent(data).trim();
 }
 
-const mapGlob = {
-  ".nvmrc": handleString,
-  ".*rc": handleJson,
-  ".*ignore": handleArray,
-  "*.js": handleJs,
-  "*.jsx": handleJs,
-  "*.json": handleJson,
-  "*.md": handleMd,
-  "*.mdx": handleMd
+const mapExtname = {
+  js: handleJs,
+  jsx: handleJs,
+  json: handleJson,
+  md: handleMd
 };
 
 const mapType = {
-  object: handleJson,
-  string: handleString
+  object: handleJson
 };
 
-async function handler({ data, name }) {
-  const basename = path.basename(name);
-  const extname = path.extname(name);
+function getType(file) {
+  let type;
 
-  // File-specific handlers (functions) override glob-based handlers.
-  if (typeof data === "function") {
-    data = data(name);
-  } else {
-    for (const glob in mapGlob) {
-      if (minimatch(name, glob)) {
-        data = await mapGlob[glob](name, data);
-        break;
-      }
-    }
+  if (isFunction(file.data)) {
+    return file.data;
   }
 
-  // All types of data returned is then passed through a type handler to
-  // ensure that we get a string.
-  if (typeof data in mapType) {
-    return await mapType[typeof data]({ name, data });
+  if (isFunction(file.type)) {
+    return file.type;
   }
 
-  throw new Error(
-    `Unable to handle data of type "${typeof data}" for "${name}".`
-  );
+  type =
+    file.type ||
+    path
+      .extname(file.name)
+      .substring(1)
+      .toLowerCase();
+  if (type in mapExtname) {
+    return mapExtname[type];
+  }
+
+  type = typeof file.data;
+  if (type in mapType) {
+    return mapType[type];
+  }
+
+  return handleString;
+}
+
+async function handler(file) {
+  return await getType(file)(file);
 }
 
 module.exports = {
