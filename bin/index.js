@@ -14,6 +14,6 @@ const { bin } = require("../src");
   }
   await bin({
     ...pkg,
-    config: search ? search.config : null
+    conartist: search ? search.config : null
   });
 })();
