@@ -130,8 +130,8 @@ type Item = {
 
 ### Config as a function
 
-If you specify the configuration as a function that returns an `array`, you'll
-it will receive arguments that you can use to customize the returned `array`.
+If you specify the configuration as a function that returns an `array`, it will
+receive arguments that you can use to customize the returned `array`.
 
 When running `conartist` from the CLI:
 
