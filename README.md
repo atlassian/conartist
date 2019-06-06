@@ -31,7 +31,21 @@ Conartist can be configured by any one of the following:
 _If you use a `.js` file, you will be able to have finer-grained control over
 your configuration. More on this later._
 
-## Usage
+## CLI
+
+```sh
+
+  Declarative project scaffolding and synchronisation.
+
+  Usage
+    $ conartist
+
+  Options
+    --cwd Set the cwd.
+
+```
+
+### Simple example
 
 If you put the following in a `package.json`.
 
@@ -49,11 +63,90 @@ Running `$ conartist` will create the specified files relative to the `cwd`.
 This is great for scaffolding out a project or keeping it in sync with what the
 configuration has in it.
 
+## Configuration
+
+The `conartist` configuration can be:
+
+- An `array` of values.
+- A `function` that returns an array of values.
+
+Each item in the configuration array must be one of the following:
+
+- `array` where the first item in the array is anything that is valid here, and
+  the second is the argument to be passed into the item if it's a function. This
+  is similar to how you'd pass options to `babel` or `eslint` plugins.
+- `function` that is executed in place with no arguments.
+- `string` that it attempts to `require` it. You can also do this yourself to
+  ensure that relative paths resolve as you intend.
+- `object` that is used as-is. This is what each item in the config `array` is
+  normalized to.
+
+The `object` shape looks like the following:
+
+```js
+type Item = {
+  // The contents of the file that will be written to disk. If this is a
+  // function, it overrides all other options and it is responsible for
+  // returning a string. The item itself is passed in, so it receives the
+  // options that were originally specified.
+  data: string | (Item => string),
+
+  // Whether or not to merge previous values, if supported.
+  merge: boolean,
+
+  // The name of the file that will be written to disk. This is the file you
+  // specified in your configuration prefixed with the `cwd` that this
+  // configuration is being run in.
+  name: string,
+
+  // Whehter or not to overwrite previous values, if supported. Overrides the
+  // `merge` option.
+  overwrite: boolean,
+
+  // Speicfies how the data should be transformed. If this is a function, it
+  // behaves similarly to `data` but it's required to use `data` and return
+  // it as a string.
+  type: "js" | "jsx" | "json" | "md" | "mdx" | (Item => string)
+};
+```
+
+### Built-in data types
+
+- `js` takes `data` as a `string` and formats it using `prettier`. If an
+  existing file is found, it does not overwrite it unless `overwrite: true` is
+  specified.
+- `jsx` alias for `js`.
+- `json` takes `data` as JSON and stringifies it. Uses options `merge` and
+  `overwrite.
+  - `{ merge: false, overwrite: false }` prefers existing values.
+  - `{ merge: false, overwrite: true }` prefers new values.
+  - `{ merge: true, overwrite: false }` merges values, preferring existing
+    values.
+  - `{ merge: true, overwrite: true }` merge values, preferring new values.
+- `md` takes `data` as a string and formats it using `prettier`.
+- `mdx` alais for `md`.
+
+### Config as a function
+
+If you specify the configuration as a function that returns an `array`, you'll
+it will receive arguments that you can use to customize the returned `array`.
+
+When running `conartist` from the CLI:
+
+- `cli` the options passed in via the CLI. The CLI allows arbitrary options and
+  they will be passed in as specified by the caller.
+- `cwd` the directory that the configuration is being run in. This defaults to
+  `process.cwd()` but can be specified as an array by `stdin` delimmited with
+  `\n` or `--cwd` delimmited by `,`. It normalize and run the configuration for
+  each cwd that is specified.
+- `opt` any other metadata passed in by the CLI runner. This can be useful when
+  creating your own CLI runner with `run()`.
+
 ## API
 
 All exported API points are documented below.
 
-### `run(opt)` - automated CLI
+### `async run(opt)` - automated CLI
 
 The `run` function automates a lot of the boilerplate in creating a CLI tool.
 It's intended to jump-start your ability for you to create a Conartist config
@@ -63,6 +156,16 @@ https://www.npmjs.com/package/travis.yml.
 A big bonus of doing things this way is that your consumers don't need
 `conartist` to be installed and serveral commands can work in harmony even if
 they depend on different versions of `conartist`.
+
+The available options are:
+
+- `conartist` the `conartist` configuration as normally specified in a config
+  file. Defaults to `[]`.
+- `description` the description of your CLI. Defaults to `""`.
+- `name` the name of your CLI. Defaults to `""`.
+- `options` the CLI options to parse. Unspecified options are still available as
+  they were specified by the user. Defaults to `{ cwd }`.
+- `version` the version of your CLI. Defaults to `"0.0.0"`.
 
 The following example creates a `npx license-mit` command.
 
@@ -80,6 +183,12 @@ The following example creates a `npx license-mit` command.
 
 #### `bin.js`
 
+The following `bin.js` uses information from your `package.json` to define
+metadata, and then specifies the `conartist` option to specify the `conartist`
+configuration. You could have specified `conartist` in your `package.json`, but
+we wanted the ability to use template literals, thus opted to specify it as a
+JavaScript object instead.
+
 ```js
 #! /usr/bin/env node
 
@@ -93,6 +202,40 @@ run({
       name: "LICENSE",
       data: `
         Copyright 2019 ${pkg.author}
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      `
+    }
+  ]
+});
+```
+
+As seen above, the configuration is specified using an `array`. However, you
+could also specify a function that gets the following options passed in:
+
+- `cli` the arguments parsed from the CLI. This allows you to add custom options
+  and use them to generate your config.
+- `cwd` the current working directory that the config is running in.
+- `opt` the options that you originally passed in to `run(opt)`.
+
+You could rewrite the above like so:
+
+```js
+#! /usr/bin/env node
+
+const { run } = require("conartist");
+
+run({
+  ...require("./package.json"),
+  conartist: ({ opt }) => [
+    {
+      name: "LICENSE",
+      data: `
+        Copyright 2019 ${opt.author}
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -162,6 +305,47 @@ $ npx . --version
 You can now run [`np`](https://github.com/sindresorhus/np) and your command is
 runnable via `npx license-mit` anywhere.
 
-### `sync(opt, cwd)` - programmatic config application
+### `async sync(cfg, opt)` - programmatic config application
 
-TBD
+The `sync` function takes a configuration as `cfg`, normalizes it with `opt` and
+applies it to your `cwd`.
+
+The available options are:
+
+- `cwd` a custom current working directory to apply the configuration to.
+  Defaults to `"."`.
+
+```js
+const { sync } = require("conartist");
+
+sync(
+  [
+    {
+      name: ".travis.yml",
+      data: "language: node_js"
+    }
+  ],
+  {
+    cwd: "packages/sub-package"
+  }
+);
+```
+
+Just like with `run`, if you specify a function as `cfg`, the options you pass
+in are passed to it:
+
+```js
+const { sync } = require("conartist");
+
+sync(
+  ({ language }) => [
+    {
+      name: ".travis.yml",
+      data: `language: ${language}`
+    }
+  ],
+  {
+    language: "node_js"
+  }
+);
+```

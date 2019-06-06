@@ -38,9 +38,11 @@ async function handleJs(file) {
 async function handleJson(file) {
   const curr = (await requireIfExists(file.name)) || file.data;
   const data = file.overwrite
-    ? file.data
+    ? file.merge
+      ? merge(curr, file.data)
+      : file.data
     : file.merge
-    ? merge(curr, file.data)
+    ? merge(file.data, curr)
     : curr;
   return JSON.stringify(data, null, 2);
 }
@@ -59,7 +61,8 @@ const mapExtname = {
   js: handleJs,
   jsx: handleJs,
   json: handleJson,
-  md: handleMd
+  md: handleMd,
+  mdx: handleMd
 };
 
 const mapType = {

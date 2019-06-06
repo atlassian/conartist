@@ -3,7 +3,6 @@ const getStdin = require("get-stdin");
 const loPickBy = require("lodash/pickBy");
 const loMap = require("lodash/map");
 const loMerge = require("lodash/merge");
-const { normalizeConfig } = require("./config");
 const { sync } = require("./sync");
 
 const optDefault = {
@@ -57,8 +56,7 @@ async function bin(opt) {
   const cli = getCli(opt);
   const cwds = await getCwds(cli);
   for (const cwd of cwds) {
-    const config = await normalizeConfig(opt.conartist, { cli, cwd, opt });
-    await sync(config, cwd);
+    await sync(opt.conartist, { cli, cwd, opt });
   }
 }
 
