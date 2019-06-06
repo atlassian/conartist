@@ -117,8 +117,7 @@ type Item = {
   - `{ overwrite: false }` Existing file is preserved.
   - `{ overwrite: true }` New data overwrites existing file.
 - `jsx` alias for `js`.
-- `json` takes `data` as JSON and stringifies it. Uses options `merge` and
-  `overwrite`.
+- `json` takes `data` as JSON and stringifies it.
   - `{ merge: false, overwrite: false }` prefers existing values.
   - `{ merge: false, overwrite: true }` prefers new values.
   - `{ merge: true, overwrite: false }` merges values, preferring existing
