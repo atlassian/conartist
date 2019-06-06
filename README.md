@@ -76,7 +76,7 @@ Each item in the configuration array must be one of the following:
   the second is the argument to be passed into the item if it's a function. This
   is similar to how you'd pass options to `babel` or `eslint` plugins.
 - `function` that is executed in place with no arguments.
-- `string` that it attempts to `require` it. You can also do this yourself to
+- `string` that it attempts to `require`. You can also do this yourself to
   ensure that relative paths resolve as you intend.
 - `object` that is used as-is. This is what each item in the config `array` is
   normalized to.
