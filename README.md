@@ -91,7 +91,8 @@ type Item = {
   // options that were originally specified.
   data: string | (Item => string),
 
-  // Whether or not to merge previous values, if supported.
+  // Whether or not to merge previous values, if supported. Defaults to
+  // `false`.
   merge: boolean,
 
   // The name of the file that will be written to disk. This is the file you
@@ -99,8 +100,8 @@ type Item = {
   // configuration is being run in.
   name: string,
 
-  // Whehter or not to overwrite previous values, if supported. Overrides the
-  // `merge` option.
+  // Whehter or not to overwrite previous values, if supported. Defaults to
+  // `false`.
   overwrite: boolean,
 
   // Speicfies how the data should be transformed. If this is a function, it
@@ -112,18 +113,20 @@ type Item = {
 
 ### Built-in data types
 
-- `js` takes `data` as a `string` and formats it using `prettier`. If an
-  existing file is found, it does not overwrite it unless `overwrite: true` is
-  specified.
+- `js` takes `data` as a `string` and formats it using `prettier`.
+  - `{ overwrite: false }` Existing file is preserved.
+  - `{ overwrite: true }` New data overwrites existing file.
 - `jsx` alias for `js`.
 - `json` takes `data` as JSON and stringifies it. Uses options `merge` and
-  `overwrite.
+  `overwrite`.
   - `{ merge: false, overwrite: false }` prefers existing values.
   - `{ merge: false, overwrite: true }` prefers new values.
   - `{ merge: true, overwrite: false }` merges values, preferring existing
     values.
   - `{ merge: true, overwrite: true }` merge values, preferring new values.
 - `md` takes `data` as a string and formats it using `prettier`.
+  - `{ overwrite: false }` Existing file is preserved.
+  - `{ overwrite: true }` New data overwrites existing file.
 - `mdx` alais for `md`.
 
 ### Config as a function
