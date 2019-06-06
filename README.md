@@ -135,14 +135,14 @@ receive arguments that you can use to customize the returned `array`.
 
 When running `conartist` from the CLI:
 
-- `cli` the options passed in via the CLI. The CLI allows arbitrary options and
-  they will be passed in as specified by the caller.
-- `cwd` the directory that the configuration is being run in. This defaults to
-  `process.cwd()` but can be specified as an array by `stdin` delimmited with
+- `cli` is the options passed in via the CLI. The CLI allows arbitrary options
+  and they will be passed in as specified by the caller.
+- `cwd` is the directory that the configuration is being run in. This defaults
+  to `process.cwd()` but can be specified as an array by `stdin` delimmited with
   `\n` or `--cwd` delimmited by `,`. It normalize and run the configuration for
   each cwd that is specified.
-- `opt` any other metadata passed in by the CLI runner. This can be useful when
-  creating your own CLI runner with `run()`.
+- `opt` is any other metadata passed in by the CLI runner. This can be useful
+  when creating your own CLI runner with `run()`.
 
 ## API
 
