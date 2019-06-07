@@ -34,6 +34,7 @@ your configuration. More on this later._
 ## CLI
 
 ```sh
+$ conartist --help
 
   Declarative project scaffolding and synchronisation.
 
