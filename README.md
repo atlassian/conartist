@@ -68,6 +68,7 @@ configuration has in it.
 The `conartist` configuration can be:
 
 - An `array` of values.
+- An `object` of `name` / `data` pairs.
 - A `function` that returns an array of values.
 
 Each item in the configuration array must be one of the following:
@@ -107,11 +108,19 @@ type Item = {
   // Speicfies how the data should be transformed. If this is a function, it
   // behaves similarly to `data` but it's required to use `data` and return
   // it as a string.
+  //
+  // By default, `type` is inferred from the `extname` of the `name` option.
+  //
+  // If no type can be inferred and one is not specified, the value is
+  // coerced to a string.
   type: "js" | "jsx" | "json" | "md" | "mdx" | (Item => string)
 };
 ```
 
 ### Built-in data types
+
+These types correspond to the `extname` of the `name` option, or can be
+explicitly specified as a `type`.
 
 - `js` takes `data` as a `string` and formats it using `prettier`.
   - `{ overwrite: false }` Existing file is preserved.
@@ -127,6 +136,30 @@ type Item = {
   - `{ overwrite: false }` Existing file is preserved.
   - `{ overwrite: true }` New data overwrites existing file.
 - `mdx` alais for `md`.
+
+### Config as an object
+
+If the configuration is specified as an `object`, it is normalized to an `array`
+where the key becomes the `name` option and the value becomes the `data` option.
+
+For example:
+
+```json
+{
+  ".nvmrc": "10.16.0"
+}
+```
+
+Would be normalized to:
+
+```json
+[
+  {
+    "name": ".nvmrc",
+    "data": "10.16.0"
+  }
+]
+```
 
 ### Config as a function
 
