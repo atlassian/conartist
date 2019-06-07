@@ -63,15 +63,24 @@ If you put the following in a `package.json`.
 }
 ```
 
-When you run `$ conartist`, it will create the following files:
+Now run `conartist`:
+
+```sh
+$ conartist
+A .gitignore
+A .nvmrc
+A .travis.yml
+A src/index.js
+```
+
+Resulting in the following file structure:
 
 ```
-.
-|- src
-|-- index.js
-|- .gitignore
-|- .nvmrc
-|- .travis.yml
+├─ src
+│ └─ index.js
+├─ .gitignore
+├─ .nvmrc
+└─ .travis.yml
 ```
 
 The key from each entry is the file path relative to the `cwd` and the value
