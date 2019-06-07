@@ -71,6 +71,8 @@ The `conartist` configuration can be:
 - An `object` of `name` / `data` pairs.
 - A `function` that returns an array of values.
 
+### Config as an array
+
 Each item in the configuration array must be one of the following:
 
 - `array` where the first item in the array is anything that is valid here, and
