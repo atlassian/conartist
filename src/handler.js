@@ -1,17 +1,12 @@
 const fs = require("fs-extra");
 const isFunction = require("lodash/isFunction");
-const loMerge = require("lodash/merge");
-const loUniq = require("lodash/uniq");
-const minimatch = require("minimatch");
+const merge = require("lodash/merge");
 const path = require("path");
 const stripIndent = require("strip-indent");
+const uniq = require("lodash/uniq");
 const { formatCode, formatJson, formatMd } = require("./format");
 
 let currentHandler;
-
-function merge(...args) {
-  return loMerge({}, ...args);
-}
 
 async function readIfExists(file) {
   return (await fs.exists(file)) ? (await fs.readFile(file)).toString() : null;
@@ -21,7 +16,7 @@ async function handleArray(file) {
   let data;
   const curr = ((await readIfExists(file.name)) || "").split("\n");
   data = file.data.concat(curr);
-  data = loUniq(data);
+  data = uniq(data);
   return data.filter(Boolean).join("\n");
 }
 
@@ -37,9 +32,9 @@ async function handleJson(file) {
 
   if (curr) {
     if (file.overwrite) {
-      data = file.merge ? merge(curr, file.data) : file.data;
+      data = file.merge ? merge({}, curr, file.data) : file.data;
     } else if (file.merge) {
-      data = merge(file.data, curr);
+      data = merge({}, file.data, curr);
     } else {
       data = curr;
     }
