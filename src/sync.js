@@ -70,7 +70,8 @@ async function sync(cfg, opt) {
     const relativePath = path.relative(process.cwd(), file.name);
     if (file.data) {
       if (await fs.exists(file.name)) {
-        console.log(`M ${relativePath}`, file.data);
+        const action = file.overwrite ? "O" : file.merge ? "M" : "U";
+        console.log(`${action} ${relativePath}`, file.data);
       } else {
         console.log(`A ${relativePath}`);
       }
