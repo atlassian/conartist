@@ -1,4 +1,5 @@
 const fs = require("fs-extra");
+const outdent = require("outdent");
 const path = require("path");
 const { sync } = require("..");
 
@@ -13,5 +14,10 @@ test("sync", async () => {
   await fs.remove(output);
   await sync(require(root), { cwd: output });
   expect(await read("file1")).toBe("overwritten");
-  expect(await read("file2")).toBe("data2");
+  expect(await read("file2")).toBe(outdent`
+    {
+      "some": "json",
+      "more": "json"
+    }
+  `);
 });

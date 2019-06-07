@@ -1,5 +1,5 @@
 module.exports = {
   files: {
-    file2: "data2"
+    file2: { some: "json" }
   }
 };
