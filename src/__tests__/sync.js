@@ -10,7 +10,7 @@ async function read(file) {
 }
 
 test("sync", async () => {
-  fs.remove(output);
+  await fs.remove(output);
   await sync(require(root), { cwd: output });
   expect(await read("file1")).toBe("overwritten");
   expect(await read("file2")).toBe("data2");

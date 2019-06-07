@@ -56,15 +56,26 @@ If you put the following in a `package.json`.
     "files": {
       ".gitignore": "node_modules",
       ".nvmrc": "10.16.0",
-      ".travis.yml": "language: node_js"
+      ".travis.yml": "language: node_js",
+      "src/index.js": "module.exports = {};"
     }
   }
 }
 ```
 
-Running `$ conartist` will create the specified files relative to the `cwd`.
-This is great for scaffolding out a project or keeping it in sync with what the
-configuration has in it.
+When you run `$ conartist`, it will create the following files:
+
+```
+.
+|- src
+|-- index.js
+|- .gitignore
+|- .nvmrc
+|- .travis.yml
+```
+
+The key from each entry is the file path relative to the `cwd` and the value
+becomes the file contents.
 
 ## Configuration
 

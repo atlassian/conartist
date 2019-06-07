@@ -67,9 +67,16 @@ async function sync(cfg, opt) {
       ...file,
       name: path.normalize(path.join(opt.cwd, file.name))
     };
+    const relativePath = path.relative(process.cwd(), file.name);
     if (file.data) {
+      if (await fs.exists(file.name)) {
+        console.log(`M ${relativePath}`, file.data);
+      } else {
+        console.log(`A ${relativePath}`);
+      }
       await fs.outputFile(file.name, await handler(file));
     } else {
+      console.log(`D ${relativePath}`);
       await fs.remove(file.name);
     }
   }
