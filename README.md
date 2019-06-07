@@ -69,17 +69,12 @@ configuration has in it.
 ## Configuration
 
 The `conartist` configuration is an `object` or a `function` that returns a
-`Config` object.
+`ConfigObject` object.
 
 ```js
-// Params are passed into config functions. This will always include a cwd
-// but may include other CLI parameters or options depending on where it's
-// invoked from.
-type Params = { [string]: any, cwd: string };
-
 // The main configuration object is what is exported from any one of the
 // configuration files that conartist supports.
-type Config = Params => ConfigObject | ConfigObject;
+type Config = ConfigObject | (({ [string]: any, cwd: string }) => ConfigObject);
 
 type ConfigObject = {
   // Files supercede any files created by includes.
@@ -88,7 +83,7 @@ type ConfigObject = {
   // Includes are just sub-configs that get executed before files. If a
   // string is specified, it is treated as a module and required. If it
   // is a relative path, it is attempted relative to the cwd.
-  includes: Array<string | Config | [string | Config, Params]>
+  includes: Array<string | Config | [string | Config, { [string]: any }]>
 };
 
 type File = {
