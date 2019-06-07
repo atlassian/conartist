@@ -1,3 +1,5 @@
 module.exports = {
-  files: [{ name: "file1", data: "data1" }]
+  files: {
+    file1: "data1"
+  }
 };

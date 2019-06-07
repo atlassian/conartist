@@ -53,9 +53,11 @@ If you put the following in a `package.json`.
 ```json
 {
   "conartist": {
-    ".gitignore": "*.log\nnode_modules",
-    ".nvmrc": "10.9.0",
-    ".travis.yml": "language: node_js"
+    "files": {
+      ".gitignore": "*.log\nnode_modules",
+      ".nvmrc": "10.9.0",
+      ".travis.yml": "language: node_js"
+    }
   }
 }
 ```

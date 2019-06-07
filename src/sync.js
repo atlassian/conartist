@@ -1,14 +1,24 @@
 const fs = require("fs-extra");
 const isArray = require("lodash/isArray");
-const merge = require("lodash/merge");
+const isPlainObject = require("lodash/isPlainObject");
+const mergeWith = require("lodash/mergeWith");
+const reduce = require("lodash/reduce");
 const path = require("path");
 const pkgUp = require("pkg-up");
 const { handler } = require("./handler");
 
+// Lodash merges arrays with objects, but we need it to replace arrays
+// with objects instead.
+function merger(prev, curr) {
+  if (isArray(prev) && isPlainObject(curr)) {
+    return curr;
+  }
+}
+
 async function sync(cfg, opt) {
-  opt = merge({ cwd: "." }, opt);
+  opt = mergeWith({ cwd: "." }, opt, merger);
   cfg = typeof cfg === "function" ? cfg(opt) : cfg;
-  cfg = merge({ files: [], include: [] }, cfg);
+  cfg = mergeWith({ files: [], include: [] }, cfg, merger);
 
   // Includes are like Babel plugins.
   for (let inc of cfg.include) {
@@ -35,6 +45,18 @@ async function sync(cfg, opt) {
     }
 
     await sync(inc, opt);
+  }
+
+  // Files can be either an array of file objects or an object of
+  // name / data pairs that gets converted to a file object.
+  if (isPlainObject(cfg.files)) {
+    cfg.files = reduce(
+      cfg.files,
+      (result, data, name) => {
+        return result.concat({ data, name });
+      },
+      []
+    );
   }
 
   // The innermost plugin is executed first. Outer plugins override those
