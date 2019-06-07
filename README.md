@@ -68,34 +68,35 @@ configuration has in it.
 
 ## Configuration
 
-The `conartist` configuration can be:
-
-- An `array` of values.
-- An `object` of `name` / `data` pairs.
-- A `function` that returns an array of values.
-
-### Config as an array
-
-Each item in the configuration array must be one of the following:
-
-- `array` where the first item in the array is anything that is valid here, and
-  the second is the argument to be passed into the item if it's a function. This
-  is similar to how you'd pass options to `babel` or `eslint` plugins.
-- `function` that is executed in place with no arguments.
-- `string` that it attempts to `require`. You can also do this yourself to
-  ensure that relative paths resolve as you intend.
-- `object` that is used as-is. This is what each item in the config `array` is
-  normalized to.
-
-The `object` shape looks like the following:
+The `conartist` configuration is an `object` or a `function` that returns a
+`Config` object.
 
 ```js
-type Item = {
+// Params are passed into config functions. This will always include a cwd
+// but may include other CLI parameters or options depending on where it's
+// invoked from.
+type Params = { [string]: any, cwd: string };
+
+// The main configuration object is what is exported from any one of the
+// configuration files that conartist supports.
+type Config = Params => ConfigObject | ConfigObject;
+
+type ConfigObject = {
+  // Files supercede any files created by includes.
+  files: Array<File> | { [string]: File.data },
+
+  // Includes are just sub-configs that get executed before files. If a
+  // string is specified, it is treated as a module and required. If it
+  // is a relative path, it is attempted relative to the cwd.
+  includes: Array<string | Config | [string | Config, Params]>
+};
+
+type File = {
   // The contents of the file that will be written to disk. If this is a
   // function, it overrides all other options and it is responsible for
   // returning a string. The item itself is passed in, so it receives the
   // options that were originally specified.
-  data: string | (Item => string),
+  data: object | string | Array<any> | (File => string),
 
   // Whether or not to merge previous values, if supported. Defaults to
   // `false`.
@@ -118,7 +119,7 @@ type Item = {
   //
   // If no type can be inferred and one is not specified, the value is
   // coerced to a string.
-  type: "js" | "jsx" | "json" | "md" | "mdx" | (Item => string)
+  type: "js" | "jsx" | "json" | "md" | "mdx" | (File => string)
 };
 ```
 
@@ -128,59 +129,18 @@ These types correspond to the `extname` of the `name` option, or can be
 explicitly specified as a `type`.
 
 - `js` takes `data` as a `string` and formats it using `prettier`.
-  - `{ overwrite: false }` Existing file is preserved.
-  - `{ overwrite: true }` New data overwrites existing file.
+  - `overwrite: false` Existing file is preserved.
+  - `overwrite: true` New data overwrites existing file.
 - `jsx` alias for `js`.
 - `json` takes `data` as JSON and stringifies it.
-  - `{ merge: false, overwrite: false }` prefers existing values.
-  - `{ merge: false, overwrite: true }` prefers new values.
-  - `{ merge: true, overwrite: false }` merges values, preferring existing
-    values.
-  - `{ merge: true, overwrite: true }` merge values, preferring new values.
+  - `merge: false, overwrite: false` prefers existing values.
+  - `merge: false, overwrite: true` prefers new values.
+  - `merge: true, overwrite: false` merges values, preferring existing values.
+  - `merge: true, overwrite: true` merge values, preferring new values.
 - `md` takes `data` as a string and formats it using `prettier`.
-  - `{ overwrite: false }` Existing file is preserved.
-  - `{ overwrite: true }` New data overwrites existing file.
+  - `overwrite: false` Existing file is preserved.
+  - `overwrite: true` New data overwrites existing file.
 - `mdx` alais for `md`.
-
-### Config as an object
-
-If the configuration is specified as an `object`, it is normalized to an `array`
-where the key becomes the `name` option and the value becomes the `data` option.
-
-For example:
-
-```json
-{
-  ".nvmrc": "10.16.0"
-}
-```
-
-Would be normalized to:
-
-```json
-[
-  {
-    "name": ".nvmrc",
-    "data": "10.16.0"
-  }
-]
-```
-
-### Config as a function
-
-If you specify the configuration as a function that returns an `array`, it will
-receive arguments that you can use to customize the returned `array`.
-
-When running `conartist` from the CLI:
-
-- `cli` is the options passed in via the CLI. The CLI allows arbitrary options
-  and they will be passed in as specified by the caller.
-- `cwd` is the directory that the configuration is being run in. This defaults
-  to `process.cwd()` but can be specified as an array by `stdin` delimmited with
-  `\n` or `--cwd` delimmited by `,`. It normalize and run the configuration for
-  each cwd that is specified.
-- `opt` is any other metadata passed in by the CLI runner. This can be useful
-  when creating your own CLI runner with `bin()`.
 
 ## API
 
