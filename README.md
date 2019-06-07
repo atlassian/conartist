@@ -178,15 +178,15 @@ When running `conartist` from the CLI:
   `\n` or `--cwd` delimmited by `,`. It normalize and run the configuration for
   each cwd that is specified.
 - `opt` is any other metadata passed in by the CLI runner. This can be useful
-  when creating your own CLI runner with `run()`.
+  when creating your own CLI runner with `bin()`.
 
 ## API
 
 All exported API points are documented below.
 
-### `async run(opt)` - automated CLI
+### `async bin(opt)` - automated CLI
 
-The `run` function automates a lot of the boilerplate in creating a CLI tool.
+The `bin` function automates a lot of the boilerplate in creating a CLI tool.
 It's intended to jump-start your ability for you to create a Conartist config
 that can be run by simply typing `npx your-command`. This idea was borrowed from
 https://www.npmjs.com/package/travis.yml.
@@ -230,10 +230,10 @@ JavaScript object instead.
 ```js
 #! /usr/bin/env node
 
-const { run } = require("conartist");
+const { bin } = require("conartist");
 const pkg = require("./package.json");
 
-run({
+bin({
   ...pkg,
   conartist: [
     {
@@ -258,16 +258,16 @@ could also specify a function that gets the following options passed in:
 - `cli` the arguments parsed from the CLI. This allows you to add custom options
   and use them to generate your config.
 - `cwd` the current working directory that the config is running in.
-- `opt` the options that you originally passed in to `run(opt)`.
+- `opt` the options that you originally passed in to `bin(opt)`.
 
 You could rewrite the above like so:
 
 ```js
 #! /usr/bin/env node
 
-const { run } = require("conartist");
+const { bin } = require("conartist");
 
-run({
+bin({
   ...require("./package.json"),
   conartist: ({ opt }) => [
     {
@@ -304,7 +304,7 @@ You can now test to see if your command works by running `npx .`.
 
 #### Built-in features
 
-The `run` function uses [`meow`](https://github.com/sindresorhus/meow) under the
+The `bin` function uses [`meow`](https://github.com/sindresorhus/meow) under the
 hood, so it automates quite a bit for you.
 
 Help:
@@ -369,7 +369,7 @@ sync(
 );
 ```
 
-Just like with `run`, if you specify a function as `cfg`, the options you pass
+Just like with `bin`, if you specify a function as `cfg`, the options you pass
 in are passed to it:
 
 ```js

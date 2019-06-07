@@ -17,10 +17,6 @@ async function readIfExists(file) {
   return (await fs.exists(file)) ? (await fs.readFile(file)).toString() : null;
 }
 
-async function requireIfExists(file) {
-  return (await fs.exists(file)) ? require(file) : null;
-}
-
 async function handleArray(file) {
   let data;
   const curr = ((await readIfExists(file.name)) || "").split("\n");
@@ -36,14 +32,21 @@ async function handleJs(file) {
 }
 
 async function handleJson(file) {
-  const curr = (await requireIfExists(file.name)) || file.data;
-  const data = file.overwrite
-    ? file.merge
-      ? merge(curr, file.data)
-      : file.data
-    : file.merge
-    ? merge(file.data, curr)
-    : curr;
+  const curr = JSON.parse(await readIfExists(file.name));
+  let data;
+
+  if (curr) {
+    if (file.overwrite) {
+      data = file.merge ? merge(curr, file.data) : file.data;
+    } else if (file.merge) {
+      data = merge(file.data, curr);
+    } else {
+      data = curr;
+    }
+  } else {
+    data = file.data;
+  }
+
   return JSON.stringify(data, null, 2);
 }
 
