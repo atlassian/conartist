@@ -212,10 +212,9 @@ const pkg = require("./package.json");
 
 bin({
   ...pkg,
-  conartist: [
-    {
-      name: "LICENSE",
-      data: `
+  conartist: {
+    files: {
+      LICENSE: `
         Copyright 2019 ${pkg.author}
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -225,7 +224,7 @@ bin({
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       `
     }
-  ]
+  }
 });
 ```
 
@@ -246,10 +245,9 @@ const { bin } = require("conartist");
 
 bin({
   ...require("./package.json"),
-  conartist: ({ opt }) => [
-    {
-      name: "LICENSE",
-      data: `
+  conartist: ({ opt }) => ({
+    files: {
+      LICENSE: `
         Copyright 2019 ${opt.author}
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -259,7 +257,7 @@ bin({
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       `
     }
-  ]
+  })
 });
 ```
 
@@ -292,21 +290,18 @@ $ npx . --help
   Creates and maintains an MIT license in your projects.
 
   Usage
-    $ license-mit
-
-  Options
-    --cwd Set the cwd.
+    $ license-mit [...cwds]
 
 ```
 
 Options:
 
 - `[stdin]` A newline separated list of directories to run the config in.
-- `--cwd` A comma separated list of directories to run the config in.
+- `[...cwds]` Paths to run the config in.
 
-_Both `[stdin]` and `--cwd` are supported by default as a way to either pipe or
-supply paths to `conartist`. If both are provided they are merged together and
-it is run on all provided paths. If none are provided, then `.` is used._
+_Both `[stdin]` and `[...cwds]` are supported by default as a way to either pipe
+or supply paths to `conartist`. If both are provided they are merged together
+and it is run on all provided paths. If none are provided, then `.` is used._
 
 Version:
 
@@ -334,12 +329,11 @@ The available options are:
 const { sync } = require("conartist");
 
 sync(
-  [
-    {
-      name: ".travis.yml",
-      data: "language: node_js"
+  {
+    files: {
+      ".travis.yml": "language: node_js"
     }
-  ],
+  },
   {
     cwd: "packages/sub-package"
   }
@@ -353,12 +347,11 @@ in are passed to it:
 const { sync } = require("conartist");
 
 sync(
-  ({ language }) => [
-    {
-      name: ".travis.yml",
-      data: `language: ${language}`
+  ({ language }) => ({
+    files: {
+      ".travis.yml": "language: node_js"
     }
-  ],
+  }),
   {
     language: "node_js"
   }
