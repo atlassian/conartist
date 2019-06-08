@@ -10,6 +10,7 @@ const optDefault = {
   description: "",
   name: "",
   options: {},
+  stdin: process.stdin,
   version: "0.0.0"
 };
 
@@ -41,13 +42,13 @@ function getCli(opt) {
   return cli;
 }
 
-async function getCwds(cli) {
+async function getCwds(cli, opt) {
   const stdin = new Promise(res => {
     let cwds = "";
-    process.stdin.on("data", data => {
+    opt.stdin.on("data", data => {
       cwds += data;
     });
-    process.stdin.on("end", () => {
+    opt.stdin.on("end", () => {
       res(cwds);
     });
   });
@@ -58,7 +59,7 @@ async function getCwds(cli) {
 
 async function bin(opt) {
   const cli = getCli(opt);
-  const cwds = await getCwds(cli);
+  const cwds = await getCwds(cli, opt);
   for (const cwd of cwds) {
     await sync(opt.conartist, { cli: cli.flags, cwd, opt });
   }

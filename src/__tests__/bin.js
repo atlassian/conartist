@@ -1,4 +1,5 @@
 const fs = require("fs-extra");
+const mockStdin = require("mock-stdin");
 const os = require("os");
 const path = require("path");
 const { bin } = require("..");
@@ -11,16 +12,22 @@ async function read(...paths) {
   return (await fs.readFile(path.join(output, ...paths))).toString();
 }
 
-beforeEach(async () => {
-  await fs.remove(output);
+let stdin;
+
+beforeEach(() => {
+  stdin = mockStdin.stdin();
+});
+
+afterEach(() => {
+  stdin.restore();
 });
 
 test("bin [stdin]", async () => {
   process.nextTick(() => {
-    process.stdin.emit("data", output1);
-    process.stdin.emit("data", os.EOL);
-    process.stdin.emit("data", output2);
-    process.stdin.emit("end");
+    stdin.send(output1);
+    stdin.send(os.EOL);
+    stdin.send(output2);
+    stdin.end();
   });
   await bin({
     name: "test",
@@ -29,7 +36,8 @@ test("bin [stdin]", async () => {
       files: {
         "index.js": "// testing"
       }
-    }
+    },
+    stdin
   });
   expect(await read("1", "index.js")).toBe("// testing\n");
   expect(await read("2", "index.js")).toBe("// testing\n");
@@ -37,7 +45,7 @@ test("bin [stdin]", async () => {
 
 test("bin [...input]", async () => {
   process.nextTick(() => {
-    process.stdin.emit("end");
+    stdin.end();
   });
   process.argv.push(output1);
   process.argv.push(output2);
@@ -48,7 +56,8 @@ test("bin [...input]", async () => {
       files: {
         "index.js": "// testing"
       }
-    }
+    },
+    stdin
   });
   expect(await read("1", "index.js")).toBe("// testing\n");
   expect(await read("2", "index.js")).toBe("// testing\n");

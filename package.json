@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "jest": "^24.8.0",
+    "mock-stdin": "^0.3.1",
     "np": "^5.0.2",
     "outdent": "^0.7.0"
   },
