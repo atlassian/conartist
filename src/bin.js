@@ -9,11 +9,7 @@ const optDefault = {
   conartist: [],
   description: "",
   name: "",
-  options: {
-    cwd: {
-      description: "Set the cwd."
-    }
-  },
+  options: {},
   version: "0.0.0"
 };
 

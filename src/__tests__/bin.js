@@ -3,7 +3,7 @@ const os = require("os");
 const path = require("path");
 const { bin } = require("..");
 
-const output = path.join(__dirname, "__output__");
+const output = path.join(__dirname, "..", "__output__");
 const output1 = path.join(output, "1");
 const output2 = path.join(output, "2");
 
