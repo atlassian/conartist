@@ -296,8 +296,8 @@ $ npx . --help
 
 Options:
 
-- `[stdin]` A newline separated list of directories to run the config in.
-- `[...cwds]` Paths to run the config in.
+- `[stdin]` A newline-separated list of directories to run the config in.
+- `[...cwds]` Space-separated paths to run the config in.
 
 _Both `[stdin]` and `[...cwds]` are supported by default as a way to either pipe
 or supply paths to `conartist`. If both are provided they are merged together
