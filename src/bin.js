@@ -1,25 +1,22 @@
 const meow = require("meow");
-const getStdin = require("get-stdin");
-const loPickBy = require("lodash/pickBy");
-const loMap = require("lodash/map");
-const loMerge = require("lodash/merge");
+const map = require("lodash/map");
+const merge = require("lodash/merge");
+const pickBy = require("lodash/pickBy");
+const os = require("os");
 const { sync } = require("./sync");
 
 const optDefault = {
   conartist: [],
   description: "",
   name: "",
-  options: {
-    cwd: {
-      description: "Set the cwd."
-    }
-  },
+  options: {},
+  stdin: process.stdin,
   version: "0.0.0"
 };
 
 function getCli(opt) {
-  opt = loMerge(optDefault, opt);
-  const flags = loPickBy(opt.options, Boolean);
+  opt = merge(optDefault, opt);
+  const flags = pickBy(opt.options, Boolean);
   const flagsExist = Object.keys(flags).length;
   const cli = meow(
     `
@@ -27,7 +24,7 @@ function getCli(opt) {
         $ ${opt.name}
     
       ${flagsExist ? "Options" : ""}
-        ${loMap(flags, (flag, name) => {
+        ${map(flags, (flag, name) => {
           const alias = flag.alias ? `, -${flag.alias}` : "";
           const defaultValue = flag.default
             ? ` (default: ${JSON.stringify(flag.default)})`
@@ -42,21 +39,29 @@ function getCli(opt) {
       version: opt.version
     }
   );
-  return cli.flags;
+  return cli;
 }
 
-async function getCwds(cli) {
-  const std = (await getStdin()).split("\n").filter(Boolean);
-  const cwd = cli.cwd ? cli.cwd.split(",") : [];
-  const all = std.concat(cwd);
+async function getCwds(cli, opt) {
+  const stdin = new Promise(res => {
+    let cwds = "";
+    opt.stdin.on("data", data => {
+      cwds += data;
+    });
+    opt.stdin.on("end", () => {
+      res(cwds);
+    });
+  });
+  const std = (await stdin).split(os.EOL).filter(Boolean);
+  const all = std.concat(cli.input);
   return all.length ? all : ["."];
 }
 
 async function bin(opt) {
   const cli = getCli(opt);
-  const cwds = await getCwds(cli);
+  const cwds = await getCwds(cli, opt);
   for (const cwd of cwds) {
-    await sync(opt.conartist, { cli, cwd, opt });
+    await sync(opt.conartist, { cli: cli.flags, cwd, opt });
   }
 }
 

@@ -88,53 +88,94 @@ becomes the file contents.
 
 ## Configuration
 
-The `conartist` configuration is an `object` or a `function` that returns a
-`ConfigObject` object.
+The `conartist` configuration is a config `object` or a `function` that returns
+a config `object`.
+
+A `files` object is the simpler form of configuration when you don't need to
+specify any other options.
 
 ```js
-// The main configuration object is what is exported from any one of the
-// configuration files that conartist supports.
-type Config = ConfigObject | (({ [string]: any, cwd: string }) => ConfigObject);
-
-type ConfigObject = {
-  // Files supercede any files created by includes.
-  files: Array<File> | { [string]: File.data },
-
-  // Includes are just sub-configs that get executed before files. If a
-  // string is specified, it is treated as a module and required. If it
-  // is a relative path, it is attempted relative to the cwd.
-  includes: Array<string | Config | [string | Config, { [string]: any }]>
+module.exports = {
+  files: {
+    "src/index.js": "module.exports = {};"
+  }
 };
+```
 
-type File = {
-  // The contents of the file that will be written to disk. If this is a
-  // function, it overrides all other options and it is responsible for
-  // returning a string. The item itself is passed in, so it receives the
-  // options that were originally specified.
-  data: object | string | Array<any> | (File => string),
+A `files` array allows you to specify more options.
 
-  // Whether or not to merge previous values, if supported. Defaults to
-  // `false`.
-  merge: boolean,
+```js
+module.exports = {
+  files: [
+    {
+      // The name of the file relative to the directory it is run in.
+      // In the `files` object, this is the key.
+      name: "src/index.js",
 
-  // The name of the file that will be written to disk. This is the file you
-  // specified in your configuration prefixed with the `cwd` that this
-  // configuration is being run in.
-  name: string,
+      // The contents of the file. In the `files` object this is the
+      // value.
+      data: "module.exports = {};",
 
-  // Whehter or not to overwrite previous values, if supported. Defaults to
-  // `false`.
-  overwrite: boolean,
+      // Whether or not to attempt merging with any existing file if
+      // supported by the data type.
+      merge: false,
 
-  // Speicfies how the data should be transformed. If this is a function, it
-  // behaves similarly to `data` but it's required to use `data` and return
-  // it as a string.
-  //
-  // By default, `type` is inferred from the `extname` of the `name` option.
-  //
-  // If no type can be inferred and one is not specified, the value is
-  // coerced to a string.
-  type: "js" | "jsx" | "json" | "md" | "mdx" | (File => string)
+      // Whether or not to override the existing file.
+      overwrite: false,
+
+      // The data type to handle the file as. Built-in data types are
+      // listed below. By default this is inferred from the file
+      // extension. If a data type for the file extension cannot be
+      // found, the typeof the value is used. If it still can't find
+      // a data type, it coerces it to a string. To specify your own
+      // data type, use a function.
+      type: "js"
+    }
+  ]
+};
+```
+
+Includes is just an array of configurations that also allow you to use
+module-specifier strings for loading external configurations. These
+configurations are applied inside-out, so order of specification is preserved.
+Your `files` specification supersedes `includes`.
+
+```js
+module.exports = {
+  includes: [
+    [
+      {
+        files: [
+          {
+            name: "src/index.js",
+            data: "module.exports = {};",
+            merge: false,
+            overwrite: false,
+            type: "js"
+          }
+        ]
+      }
+    ]
+  ]
+};
+```
+
+As noted above, you can also specify includes using module-specifiers.
+
+```js
+module.exports = {
+  includes: [
+    // Loaded via node_modules.
+    "some-module-config",
+
+    // Loaded relative to the CWD.
+    "./path/to/config",
+
+    // Use this form if your config will be used as an include because
+    // paths are resolved relative to where the config is run from.
+    require("some-module-config"),
+    require("./path/to/config")
+  ]
 };
 ```
 
@@ -212,10 +253,9 @@ const pkg = require("./package.json");
 
 bin({
   ...pkg,
-  conartist: [
-    {
-      name: "LICENSE",
-      data: `
+  conartist: {
+    files: {
+      LICENSE: `
         Copyright 2019 ${pkg.author}
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -225,7 +265,7 @@ bin({
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       `
     }
-  ]
+  }
 });
 ```
 
@@ -246,10 +286,9 @@ const { bin } = require("conartist");
 
 bin({
   ...require("./package.json"),
-  conartist: ({ opt }) => [
-    {
-      name: "LICENSE",
-      data: `
+  conartist: ({ opt }) => ({
+    files: {
+      LICENSE: `
         Copyright 2019 ${opt.author}
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -259,7 +298,7 @@ bin({
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       `
     }
-  ]
+  })
 });
 ```
 
@@ -292,21 +331,18 @@ $ npx . --help
   Creates and maintains an MIT license in your projects.
 
   Usage
-    $ license-mit
-
-  Options
-    --cwd Set the cwd.
+    $ license-mit [...cwds]
 
 ```
 
 Options:
 
-- `[stdin]` A newline separated list of directories to run the config in.
-- `--cwd` A comma separated list of directories to run the config in.
+- `[stdin]` A newline-separated list of directories to run the config in.
+- `[...cwds]` Space-separated paths to run the config in.
 
-_Both `[stdin]` and `--cwd` are supported by default as a way to either pipe or
-supply paths to `conartist`. If both are provided they are merged together and
-it is run on all provided paths. If none are provided, then `.` is used._
+_Both `[stdin]` and `[...cwds]` are supported by default as a way to either pipe
+or supply paths to `conartist`. If both are provided they are merged together
+and it is run on all provided paths. If none are provided, then `.` is used._
 
 Version:
 
@@ -334,12 +370,11 @@ The available options are:
 const { sync } = require("conartist");
 
 sync(
-  [
-    {
-      name: ".travis.yml",
-      data: "language: node_js"
+  {
+    files: {
+      ".travis.yml": "language: node_js"
     }
-  ],
+  },
   {
     cwd: "packages/sub-package"
   }
@@ -353,14 +388,17 @@ in are passed to it:
 const { sync } = require("conartist");
 
 sync(
-  ({ language }) => [
-    {
-      name: ".travis.yml",
-      data: `language: ${language}`
+  ({ language }) => ({
+    files: {
+      ".travis.yml": "language: node_js"
     }
-  ],
+  }),
   {
     language: "node_js"
   }
 );
+```
+
+```
+
 ```
