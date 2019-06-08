@@ -88,53 +88,94 @@ becomes the file contents.
 
 ## Configuration
 
-The `conartist` configuration is an `object` or a `function` that returns a
-`ConfigObject` object.
+The `conartist` configuration is a config `object` or a `function` that returns
+a config `object`.
+
+A `files` object is the simpler form of configuration when you don't need to
+specify any other options.
 
 ```js
-// The main configuration object is what is exported from any one of the
-// configuration files that conartist supports.
-type Config = ConfigObject | (({ [string]: any, cwd: string }) => ConfigObject);
-
-type ConfigObject = {
-  // Files supercede any files created by includes.
-  files: Array<File> | { [string]: File.data },
-
-  // Includes are just sub-configs that get executed before files. If a
-  // string is specified, it is treated as a module and required. If it
-  // is a relative path, it is attempted relative to the cwd.
-  includes: Array<string | Config | [string | Config, { [string]: any }]>
+module.exports = {
+  files: {
+    "src/index.js": "module.exports = {};"
+  }
 };
+```
 
-type File = {
-  // The contents of the file that will be written to disk. If this is a
-  // function, it overrides all other options and it is responsible for
-  // returning a string. The item itself is passed in, so it receives the
-  // options that were originally specified.
-  data: object | string | Array<any> | (File => string),
+A `files` array allows you to specify more options.
 
-  // Whether or not to merge previous values, if supported. Defaults to
-  // `false`.
-  merge: boolean,
+```js
+module.exports = {
+  files: [
+    {
+      // The name of the file relative to the directory it is run in.
+      // In the `files` object, this is the key.
+      name: "src/index.js",
 
-  // The name of the file that will be written to disk. This is the file you
-  // specified in your configuration prefixed with the `cwd` that this
-  // configuration is being run in.
-  name: string,
+      // The contents of the file. In the `files` object this is the
+      // value.
+      data: "module.exports = {};",
 
-  // Whehter or not to overwrite previous values, if supported. Defaults to
-  // `false`.
-  overwrite: boolean,
+      // Whether or not to attempt merging with any existing file if
+      // supported by the data type.
+      merge: false,
 
-  // Speicfies how the data should be transformed. If this is a function, it
-  // behaves similarly to `data` but it's required to use `data` and return
-  // it as a string.
-  //
-  // By default, `type` is inferred from the `extname` of the `name` option.
-  //
-  // If no type can be inferred and one is not specified, the value is
-  // coerced to a string.
-  type: "js" | "jsx" | "json" | "md" | "mdx" | (File => string)
+      // Whether or not to override the existing file.
+      overwrite: false,
+
+      // The data type to handle the file as. Built-in data types are
+      // listed below. By default this is inferred from the file
+      // extension. If a data type for the file extension cannot be
+      // found, the typeof the value is used. If it still can't find
+      // a data type, it coerces it to a string. To specify your own
+      // data type, use a function.
+      type: "js"
+    }
+  ]
+};
+```
+
+Includes is just an array of configurations that also allow you to use
+module-specifier strings for loading external configurations. These
+configurations are applied inside-out, so order of specification is preserved.
+Your `files` specification supersedes `includes`.
+
+```js
+module.exports = {
+  includes: [
+    [
+      {
+        files: [
+          {
+            name: "src/index.js",
+            data: "module.exports = {};",
+            merge: false,
+            overwrite: false,
+            type: "js"
+          }
+        ]
+      }
+    ]
+  ]
+};
+```
+
+As noted above, you can also specify includes using module-specifiers.
+
+```js
+module.exports = {
+  includes: [
+    // Loaded via node_modules.
+    "some-module-config",
+
+    // Loaded relative to the CWD.
+    "./path/to/config",
+
+    // Use this form if your config will be used as an include because
+    // paths are resolved relative to where the config is run from.
+    require("some-module-config"),
+    require("./path/to/config")
+  ]
 };
 ```
 
@@ -356,4 +397,8 @@ sync(
     language: "node_js"
   }
 );
+```
+
+```
+
 ```
