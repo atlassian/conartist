@@ -89,7 +89,7 @@ async function sync(cfg, opt) {
     } else {
       if (await fs.exists(file.name)) {
         const action = file.overwrite ? "O" : file.merge ? "M" : "U";
-        console.log(`${action} ${relativePath}`, file.data);
+        console.log(`${action} ${relativePath}`);
       } else {
         console.log(`A ${relativePath}`);
       }
