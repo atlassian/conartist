@@ -1,14 +1,18 @@
 module.exports = {
+  fileDefaults: {
+    merge: true,
+    overwrite: true
+  },
   files: [
     {
       name: "file1",
-      data: "overwritten",
+      data: "index -> file1",
       overwrite: true
     },
     {
       name: "file2",
-      data: { some: "modified", more: "json" },
-      merge: true
+      data: { test: "index -> file2" },
+      overwrite: false
     }
   ],
   include: ["./src/__fixture__/sync/include1", require("./include2")]

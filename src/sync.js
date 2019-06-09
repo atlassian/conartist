@@ -7,6 +7,15 @@ const path = require("path");
 const pkgUp = require("pkg-up");
 const { handler } = require("./handler");
 
+const defaults = {
+  fileDefaults: {
+    merge: false,
+    overwrite: false
+  },
+  files: [],
+  include: []
+};
+
 // Lodash merges arrays with objects, but we need it to replace arrays
 // with objects instead.
 function merger(prev, curr) {
@@ -18,7 +27,7 @@ function merger(prev, curr) {
 async function sync(cfg, opt) {
   opt = mergeWith({ cwd: "." }, opt, merger);
   cfg = typeof cfg === "function" ? cfg(opt) : cfg;
-  cfg = mergeWith({ files: [], include: [] }, cfg, merger);
+  cfg = mergeWith({}, defaults, cfg, merger);
 
   // Includes are like Babel plugins.
   for (let inc of cfg.include) {
@@ -64,6 +73,7 @@ async function sync(cfg, opt) {
   // else before it.
   for (let file of cfg.files) {
     file = {
+      ...cfg.fileDefaults,
       ...file,
       name: path.normalize(path.join(opt.cwd, file.name))
     };

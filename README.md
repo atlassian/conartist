@@ -91,6 +91,8 @@ becomes the file contents.
 The `conartist` configuration is a config `object` or a `function` that returns
 a config `object`.
 
+_All options are optional._
+
 A `files` object is the simpler form of configuration when you don't need to
 specify any other options.
 
@@ -106,6 +108,12 @@ A `files` array allows you to specify more options.
 
 ```js
 module.exports = {
+  // The these are merged with each entry in `files` but do not
+  // override them.
+  fileDefaults: {
+    merge: false,
+    overwrite: false
+  },
   files: [
     {
       // The name of the file relative to the directory it is run in.
@@ -136,14 +144,19 @@ module.exports = {
 ```
 
 Includes is just an array of configurations that also allow you to use
-module-specifier strings for loading external configurations. These
-configurations are applied inside-out, so order of specification is preserved.
-Your `files` specification supersedes `includes`.
+module-specifier strings for loading external configurations.
 
 ```js
 module.exports = {
+  // These only act as defaults for `files` and do not affect anything
+  // in the `includes` option.
+  fileDefaults: {
+    merge: false,
+    overwrite: false
+  },
   includes: [
     [
+      // This is just a standard config as specified for module.exports.
       {
         files: [
           {
@@ -178,6 +191,11 @@ module.exports = {
   ]
 };
 ```
+
+Making `includes` just standard configurations means that an include can just be
+any old configuration and they're resolved recursively down the tree. The outer
+configurations are applied _after_ the inner configurations, but they do _not_
+override them, allowing them to be composed.
 
 ### Built-in data types
 
