@@ -10,7 +10,8 @@ const { handler } = require("./handler");
 const configDefaults = {
   fileDefaults: {
     merge: false,
-    overwrite: false
+    overwrite: false,
+    remove: false
   },
   files: [],
   include: []
@@ -82,7 +83,10 @@ async function sync(cfg, opt) {
       name: path.normalize(path.join(opt.cwd, file.name))
     };
     const relativePath = path.relative(process.cwd(), file.name);
-    if (file.data) {
+    if (file.remove) {
+      console.log(`D ${relativePath}`);
+      await fs.remove(file.name);
+    } else {
       if (await fs.exists(file.name)) {
         const action = file.overwrite ? "O" : file.merge ? "M" : "U";
         console.log(`${action} ${relativePath}`, file.data);
@@ -90,9 +94,6 @@ async function sync(cfg, opt) {
         console.log(`A ${relativePath}`);
       }
       await fs.outputFile(file.name, await handler(file));
-    } else {
-      console.log(`D ${relativePath}`);
-      await fs.remove(file.name);
     }
   }
 }

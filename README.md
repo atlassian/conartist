@@ -112,7 +112,8 @@ module.exports = {
   // override them.
   fileDefaults: {
     merge: false,
-    overwrite: false
+    overwrite: false,
+    remove: false
   },
   files: [
     {
@@ -131,6 +132,10 @@ module.exports = {
       // Whether or not to override the existing file.
       overwrite: false,
 
+      // Whether or not the file should be removed. This superseces
+      // any other option because the file is deleted.
+      remove: false,
+
       // The data type to handle the file as. Built-in data types are
       // listed below. By default this is inferred from the file
       // extension. If a data type for the file extension cannot be
@@ -148,12 +153,9 @@ module-specifier strings for loading external configurations.
 
 ```js
 module.exports = {
-  // These only act as defaults for `files` and do not affect anything
-  // in the `includes` option.
-  fileDefaults: {
-    merge: false,
-    overwrite: false
-  },
+  // These only act as defaults for `files` in the config in which they
+  // are specified and do not affect anything in `includes`.
+  fileDefaults: {},
   includes: [
     [
       // This is just a standard config as specified for module.exports.
@@ -161,10 +163,7 @@ module.exports = {
         files: [
           {
             name: "src/index.js",
-            data: "module.exports = {};",
-            merge: false,
-            overwrite: false,
-            type: "js"
+            data: "module.exports = {};"
           }
         ]
       }

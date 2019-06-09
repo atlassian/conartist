@@ -19,4 +19,5 @@ test("sync", async () => {
       "test": "include1 -> file2"
     }
   `);
+  expect(await fs.exists(path.join(output, "file3"))).toBe(false);
 });
