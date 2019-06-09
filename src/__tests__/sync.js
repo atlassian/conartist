@@ -13,11 +13,10 @@ async function read(file) {
 test("sync", async () => {
   await fs.remove(output);
   await sync(require(root), { cwd: output });
-  expect(await read("file1")).toBe("overwritten");
+  expect(await read("file1")).toBe("index -> file1");
   expect(await read("file2")).toBe(outdent`
     {
-      "some": "json",
-      "more": "json"
+      "test": "include1 -> file2"
     }
   `);
 });
