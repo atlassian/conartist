@@ -14,16 +14,11 @@ function objectOrDescription(option, defaults) {
 }
 
 function buildOption(name, option) {
-  name = parseOptionName(name);
   return [
     `--${name}${option.alias ? `, ${option.alias}` : ""}`,
     option.description,
     option.default
   ];
-}
-
-function parseOptionName(option) {
-  return option.match(/--([^\s*]+)/)[1];
 }
 
 async function cli(opt) {
@@ -52,11 +47,11 @@ async function cli(opt) {
       cli.action(args => {
         // Ensure we ask questions for global options if not specified.
         Object.keys(opt.options).forEach(o => {
-          const name = parseOptionName(o);
-          if (option.question && !(name in args)) {
+          const option = objectOrDescription(opt.options[o]);
+          if (option.question && !(o in args)) {
             questions.push({
               default: option.default,
-              name,
+              name: o,
               ...option.question
             });
           }
@@ -88,8 +83,7 @@ async function cli(opt) {
       });
     });
 
-    // We parse, but don't execute because we might need to ask questions.
-    args = cli.parse(process.argv);
+    cli.parse(process.argv);
   });
 }
 
