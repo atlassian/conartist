@@ -55,6 +55,13 @@ async function handleString(file) {
   const data = file.overwrite ? file.data : curr;
   return stripIndent(data).trim();
 }
+async function templateHandlebars() {
+  return Handlebars.compile(await fs.readFile(f.template));
+}
+
+async function templateJs(f) {
+  return require(f.template);
+}
 
 const mapExtname = {
   js: handleJs,
@@ -65,10 +72,10 @@ const mapExtname = {
 };
 
 const mapExtnameToTemplate = {
-  hbs: f => Handlebars.compile(f.template),
-  handlebars: f => Handlebars.compile(f.template),
-  js: f => require(file.name),
-  json: f => require(file.name)
+  hbs: templateHandlebars,
+  handlebars: templateHandlebars,
+  js: templateJs,
+  json: templateJs
 };
 
 const mapType = {
