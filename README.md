@@ -36,13 +36,21 @@ your configuration. More on this later._
 ```sh
 $ conartist --help
 
-  Declarative project scaffolding and synchronisation.
+  Description
+    Declarative project scaffolding and synchronisation.
 
   Usage
-    $ conartist
+    $ conartist <command> [options]
+
+  Available Commands
+    default    Run the default configuration.
+
+  For more info, run any command with the `--help` flag
+    $ conartist default --help
 
   Options
-    --cwd Set the cwd.
+    -v, --version    Displays current version
+    -h, --help       Displays this message
 
 ```
 
