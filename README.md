@@ -245,8 +245,14 @@ The available options are:
 - `version` the version of your CLI. Defaults to `"0.0.0"`.
 - `conartist` the `conartist` configuration as normally specified in a config
   file. Defaults to `{}`.
-- `options` custom CLI options.
-- `commands` custom CLI sub-commands
+- `options` custom CLI options. Each key is the option name and each value can
+  either be a `string` and will be the description, or it allows:
+  - `alias` the option alias (i.e. `-a`).
+  - `default` the default value.
+  - `description` the option description.
+- `commands` custom CLI sub-commands. Each key is the command name and each
+  value can either be a `string` and will be the description, or it allows:
+  - `description` the command description.
 
 The following example creates a `npx license-mit` command.
 

@@ -22,10 +22,6 @@ function buildOption(name, option) {
   ];
 }
 
-function parseCommandName(command) {
-  return command.split(" ")[0];
-}
-
 function parseOptionName(option) {
   return option.match(/--([^\s*]+)/)[1];
 }
@@ -45,15 +41,14 @@ async function cli(opt) {
 
     // Command registration.
     Object.keys(opt.commands).forEach(c => {
-      const name = parseCommandName(c);
       const command = objectOrDescription(opt.commands[c], {
-        args: [],
         options: {}
       });
 
-      cli.command(`${c}${command.args.join(" ")}`, command.description, {
-        default: name === "default"
+      cli.command(c, command.description, {
+        default: c === "default"
       });
+
       cli.action(args => {
         // Ensure we ask questions for global options if not specified.
         Object.keys(opt.options).forEach(o => {
