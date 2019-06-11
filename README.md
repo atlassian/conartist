@@ -232,13 +232,13 @@ they depend on different versions of `conartist`.
 
 The available options are:
 
-- `conartist` the `conartist` configuration as normally specified in a config
-  file. Defaults to `[]`.
-- `description` the description of your CLI. Defaults to `""`.
 - `name` the name of your CLI. Defaults to `""`.
-- `options` the CLI options to parse. Unspecified options are still available as
-  they were specified by the user. Defaults to `{ cwd }`.
+- `description` the description of your CLI. Defaults to `""`.
 - `version` the version of your CLI. Defaults to `"0.0.0"`.
+- `conartist` the `conartist` configuration as normally specified in a config
+  file. Defaults to `{}`.
+- `options` custom CLI options.
+- `commands` custom CLI sub-commands
 
 The following example creates a `npx license-mit` command.
 
@@ -250,7 +250,7 @@ The following example creates a `npx license-mit` command.
   "description": "Creates and maintains an MIT license in your projects.",
   "author": "Your Name <you@yourdomain.com>",
   "version": "1.0.0",
-  "bin": "bin"
+  "bin": "."
 }
 ```
 
@@ -291,6 +291,7 @@ could also specify a function that gets the following options passed in:
 
 - `cli` the arguments parsed from the CLI. This allows you to add custom options
   and use them to generate your config.
+- `cmd` the sub-command that was run. Defaults to `"default"`.
 - `cwd` the current working directory that the config is running in.
 - `opt` the options that you originally passed in to `bin(opt)`.
 
@@ -337,29 +338,38 @@ You can now test to see if your command works by running `npx .`.
 
 #### Built-in features
 
-The `bin` function uses [`meow`](https://github.com/sindresorhus/meow) under the
-hood, so it automates quite a bit for you.
+The `bin` function automates quite a bit for you.
+
+Running in specific directories:
+
+```sh
+$ npx . path/to/new path/to/existing
+A path/to/new/LICENSE
+U path/to/existing/LICENSE
+```
 
 Help:
 
 ```sh
 $ npx . --help
 
-  Creates and maintains an MIT license in your projects.
+  Description
+    Creates and maintains an MIT license in your projects.
 
   Usage
-    $ license-mit [...cwds]
+    $ mit-license <command> [options]
+
+  Available Commands
+    default    Run the default configuration.
+
+  For more info, run any command with the `--help` flag
+    $ mit-license default --help
+
+  Options
+    -v, --version    Displays current version
+    -h, --help       Displays this message
 
 ```
-
-Options:
-
-- `[stdin]` A newline-separated list of directories to run the config in.
-- `[...cwds]` Space-separated paths to run the config in.
-
-_Both `[stdin]` and `[...cwds]` are supported by default as a way to either pipe
-or supply paths to `conartist`. If both are provided they are merged together
-and it is run on all provided paths. If none are provided, then `.` is used._
 
 Version:
 
@@ -414,8 +424,4 @@ sync(
     language: "node_js"
   }
 );
-```
-
-```
-
 ```
