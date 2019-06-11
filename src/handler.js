@@ -1,4 +1,5 @@
 const fs = require("fs-extra");
+const Handlebars = require("handlebars");
 const isFunction = require("lodash/isFunction");
 const merge = require("lodash/merge");
 const path = require("path");
@@ -63,9 +64,27 @@ const mapExtname = {
   mdx: handleMd
 };
 
+const mapExtnameToTemplate = {
+  hbs: f => Handlebars.compile(f.template),
+  handlebars: f => Handlebars.compile(f.template),
+  js: f => require(file.name),
+  json: f => require(file.name)
+};
+
 const mapType = {
   object: handleJson
 };
+
+async function getTemplate(file) {
+  const ext = path.extname(file.template).substring(1);
+  const tmp = mapExtnameToTempalte[ext];
+  if (!tmp) {
+    throw new Error(
+      `Unknown template handler "${ext}" for "${file.template}".`
+    );
+  }
+  return await tmp(file);
+}
 
 function getType(file) {
   let type;
@@ -97,6 +116,9 @@ function getType(file) {
 }
 
 async function handler(file) {
+  if (file.template) {
+    file.data = await getTemplate(file);
+  }
   return await getType(file)(file);
 }
 
