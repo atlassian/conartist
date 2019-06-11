@@ -18,7 +18,8 @@ const configDefaults = {
 };
 
 const optionDefaults = {
-  cwd: "."
+  cwd: ".",
+  dry: false
 };
 
 // Lodash merges arrays with objects, but we need it to replace arrays
@@ -85,7 +86,9 @@ async function sync(cfg, opt) {
     const relativePath = path.relative(process.cwd(), file.name);
     if (file.remove) {
       console.log(`D ${relativePath}`);
-      await fs.remove(file.name);
+      if (!opt.dry) {
+        await fs.remove(file.name);
+      }
     } else {
       if (await fs.exists(file.name)) {
         const action = file.overwrite ? "O" : file.merge ? "M" : "U";
@@ -93,7 +96,9 @@ async function sync(cfg, opt) {
       } else {
         console.log(`A ${relativePath}`);
       }
-      await fs.outputFile(file.name, await handler(file));
+      if (!opt.dry) {
+        await fs.outputFile(file.name, await handler(file));
+      }
     }
   }
 }

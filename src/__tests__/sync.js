@@ -21,3 +21,11 @@ test("sync", async () => {
   `);
   expect(await fs.exists(path.join(output, "file3"))).toBe(false);
 });
+
+test("sync { dry: true }", async () => {
+  await fs.remove(output);
+  await sync(require(root), { cwd: output, dry: true });
+  expect(await fs.exists(path.join(output, "file1"))).toBe(false);
+  expect(await fs.exists(path.join(output, "file2"))).toBe(false);
+  expect(await fs.exists(path.join(output, "file3"))).toBe(false);
+});
