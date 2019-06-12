@@ -50,6 +50,7 @@ $ conartist --help
 
   Options
     -v, --version    Displays current version
+    -d, --dry        Perform a dry run.
     -h, --help       Displays this message
 
 ```
@@ -300,8 +301,9 @@ bin({
 });
 ```
 
-As seen above, the configuration is specified using an `array`. However, you
-could also specify a function that gets the following options passed in:
+As seen above, the configuration is specified using an `object`. However, you
+could also specify a function returning an `object` that gets the following
+options passed in:
 
 - `cli` the arguments parsed from the CLI. This allows you to add custom options
   and use them to generate your config.
@@ -406,6 +408,8 @@ The available options are:
 
 - `cwd` a custom current working directory to apply the configuration to.
   Defaults to `"."`.
+- `dry` perform a dry run (does not modify any files, just outputs what would
+  happen to them).
 
 ```js
 const { sync } = require("conartist");

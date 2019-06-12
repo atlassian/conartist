@@ -95,7 +95,13 @@ const optDefault = {
 
   // CLI commands / options.
   cli,
-  options: {},
+  options: {
+    dry: {
+      alias: "d",
+      description: "Perform a dry run.",
+      type: "boolean"
+    }
+  },
   commands: {
     default: "Run the default configuration."
   },
@@ -108,7 +114,7 @@ async function bin(opt) {
   opt = merge(optDefault, opt);
   const { cli, cmd } = await opt.cli(opt);
   for (const cwd of cli._) {
-    await sync(opt.conartist, { cli, cmd, cwd, opt });
+    await sync(opt.conartist, { cli, cmd, cwd, dry: cli.dry, opt });
   }
 }
 

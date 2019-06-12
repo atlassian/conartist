@@ -2,9 +2,10 @@ const fs = require("fs-extra");
 const isArray = require("lodash/isArray");
 const isPlainObject = require("lodash/isPlainObject");
 const mergeWith = require("lodash/mergeWith");
-const reduce = require("lodash/reduce");
+const os = require("os");
 const path = require("path");
 const pkgUp = require("pkg-up");
+const reduce = require("lodash/reduce");
 const { handler } = require("./handler");
 
 const configDefaults = {
@@ -14,11 +15,13 @@ const configDefaults = {
     remove: false
   },
   files: [],
-  include: []
+  include: [],
+  includes: []
 };
 
 const optionDefaults = {
-  cwd: "."
+  cwd: ".",
+  dry: false
 };
 
 // Lodash merges arrays with objects, but we need it to replace arrays
@@ -34,8 +37,40 @@ async function sync(cfg, opt) {
   cfg = typeof cfg === "function" ? cfg(opt) : cfg;
   cfg = mergeWith({}, configDefaults, cfg, merger);
 
+  // Files can be either an array of file objects or an object of
+  // name / data pairs that gets converted to a file object.
+  if (isPlainObject(cfg.files)) {
+    cfg.files = reduce(
+      cfg.files,
+      (result, data, name) => {
+        return result.concat({ data, name });
+      },
+      []
+    );
+  }
+
+  // Make include alias includes for backward compat, for now.
+  cfg.includes = cfg.includes.concat(cfg.include);
+
+  // If there's no files or includes, it's not really an error but there's
+  // nothing to do.
+  if (!cfg.files.length && !cfg.includes.length) {
+    console.warn(
+      'You have not provided any "files" or "includes". For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist.'
+    );
+    process.exit();
+  }
+
+  // Ensure they know they're doing a dry run.
+  if (opt.dry) {
+    console.log(
+      "A dry run is being performed. No files will be output.",
+      os.EOL
+    );
+  }
+
   // Includes are like Babel plugins.
-  for (let inc of cfg.include) {
+  for (let inc of cfg.includes) {
     let arg;
 
     // Like in Babel configs, you can specify an array to pass options to
@@ -61,18 +96,6 @@ async function sync(cfg, opt) {
     await sync(inc, opt);
   }
 
-  // Files can be either an array of file objects or an object of
-  // name / data pairs that gets converted to a file object.
-  if (isPlainObject(cfg.files)) {
-    cfg.files = reduce(
-      cfg.files,
-      (result, data, name) => {
-        return result.concat({ data, name });
-      },
-      []
-    );
-  }
-
   // The innermost plugin is executed first. Outer plugins override those
   // and in the same convention, files at the top level override everything
   // else before it.
@@ -85,7 +108,9 @@ async function sync(cfg, opt) {
     const relativePath = path.relative(process.cwd(), file.name);
     if (file.remove) {
       console.log(`D ${relativePath}`);
-      await fs.remove(file.name);
+      if (!opt.dry) {
+        await fs.remove(file.name);
+      }
     } else {
       if (await fs.exists(file.name)) {
         const action = file.overwrite ? "O" : file.merge ? "M" : "U";
@@ -93,7 +118,9 @@ async function sync(cfg, opt) {
       } else {
         console.log(`A ${relativePath}`);
       }
-      await fs.outputFile(file.name, await handler(file));
+      if (!opt.dry) {
+        await fs.outputFile(file.name, await handler(file));
+      }
     }
   }
 }

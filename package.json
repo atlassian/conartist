@@ -16,7 +16,7 @@
   },
   "name": "conartist",
   "description": "Declarative project scaffolding and synchronisation.",
-  "version": "0.24.0",
+  "version": "0.25.1",
   "bin": "./bin/index.js",
   "dependencies": {
     "cosmiconfig": "^5.2.1",
