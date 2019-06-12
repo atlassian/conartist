@@ -35,10 +35,31 @@ async function sync(cfg, opt) {
   cfg = typeof cfg === "function" ? cfg(opt) : cfg;
   cfg = mergeWith({}, configDefaults, cfg, merger);
 
+  // Files can be either an array of file objects or an object of
+  // name / data pairs that gets converted to a file object.
+  if (isPlainObject(cfg.files)) {
+    cfg.files = reduce(
+      cfg.files,
+      (result, data, name) => {
+        return result.concat({ data, name });
+      },
+      []
+    );
+  }
+
+  // If there's no files or includes, it's not really an error but there's
+  // nothing to do.
   if (!cfg.files.length && !cfg.include.length) {
     console.warn(
       'You have not provided any "files" or "includes". For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist.'
     );
+    process.exit();
+  }
+
+  // Ensure they know they're doing a dry run.
+  if (opt.dry) {
+    console.log("A dry run is being performed. No files will be output.");
+    console.log();
   }
 
   // Includes are like Babel plugins.
@@ -66,18 +87,6 @@ async function sync(cfg, opt) {
     }
 
     await sync(inc, opt);
-  }
-
-  // Files can be either an array of file objects or an object of
-  // name / data pairs that gets converted to a file object.
-  if (isPlainObject(cfg.files)) {
-    cfg.files = reduce(
-      cfg.files,
-      (result, data, name) => {
-        return result.concat({ data, name });
-      },
-      []
-    );
   }
 
   // The innermost plugin is executed first. Outer plugins override those
