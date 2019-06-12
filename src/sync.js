@@ -15,7 +15,8 @@ const configDefaults = {
     remove: false
   },
   files: [],
-  include: []
+  include: [],
+  includes: []
 };
 
 const optionDefaults = {
@@ -48,9 +49,12 @@ async function sync(cfg, opt) {
     );
   }
 
+  // Make include alias includes for backward compat, for now.
+  cfg.includes = cfg.includes.concat(cfg.include);
+
   // If there's no files or includes, it's not really an error but there's
   // nothing to do.
-  if (!cfg.files.length && !cfg.include.length) {
+  if (!cfg.files.length && !cfg.includes.length) {
     console.warn(
       'You have not provided any "files" or "includes". For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist.'
     );
@@ -66,7 +70,7 @@ async function sync(cfg, opt) {
   }
 
   // Includes are like Babel plugins.
-  for (let inc of cfg.include) {
+  for (let inc of cfg.includes) {
     let arg;
 
     // Like in Babel configs, you can specify an array to pass options to
