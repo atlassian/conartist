@@ -35,6 +35,12 @@ async function sync(cfg, opt) {
   cfg = typeof cfg === "function" ? cfg(opt) : cfg;
   cfg = mergeWith({}, configDefaults, cfg, merger);
 
+  if (!cfg.files.length && !cfg.include.length) {
+    console.warn(
+      'You have not provided any "files" or "includes". For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist.'
+    );
+  }
+
   // Includes are like Babel plugins.
   for (let inc of cfg.include) {
     let arg;
