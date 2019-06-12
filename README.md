@@ -286,8 +286,9 @@ bin({
 });
 ```
 
-As seen above, the configuration is specified using an `array`. However, you
-could also specify a function that gets the following options passed in:
+As seen above, the configuration is specified using an `object`. However, you
+could also specify a function returning an `object` that gets the following
+options passed in:
 
 - `cli` the arguments parsed from the CLI. This allows you to add custom options
   and use them to generate your config.
