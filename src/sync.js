@@ -2,9 +2,10 @@ const fs = require("fs-extra");
 const isArray = require("lodash/isArray");
 const isPlainObject = require("lodash/isPlainObject");
 const mergeWith = require("lodash/mergeWith");
-const reduce = require("lodash/reduce");
+const os = require("os");
 const path = require("path");
 const pkgUp = require("pkg-up");
+const reduce = require("lodash/reduce");
 const { handler } = require("./handler");
 
 const configDefaults = {
@@ -58,8 +59,10 @@ async function sync(cfg, opt) {
 
   // Ensure they know they're doing a dry run.
   if (opt.dry) {
-    console.log("A dry run is being performed. No files will be output.");
-    console.log();
+    console.log(
+      "A dry run is being performed. No files will be output.",
+      os.EOL
+    );
   }
 
   // Includes are like Babel plugins.
