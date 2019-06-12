@@ -42,7 +42,7 @@ $ conartist --help
     $ conartist
 
   Options
-    --cwd Set the cwd.
+    --dry, -d Perform a dry run.
 
 ```
 
@@ -382,6 +382,8 @@ The available options are:
 
 - `cwd` a custom current working directory to apply the configuration to.
   Defaults to `"."`.
+- `dry` perform a dry run (does not modify any files, just outputs what would
+  happen to them).
 
 ```js
 const { sync } = require("conartist");

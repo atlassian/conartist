@@ -6,10 +6,16 @@ const os = require("os");
 const { sync } = require("./sync");
 
 const optDefault = {
-  conartist: [],
+  conartist: {},
   description: "",
   name: "",
-  options: {},
+  options: {
+    dry: {
+      alias: "d",
+      description: "Perform a dry run.",
+      type: "boolean"
+    }
+  },
   version: "0.0.0"
 };
 
@@ -49,7 +55,12 @@ async function bin(opt) {
   const cli = getCli(opt);
   const cwds = await getCwds(cli, opt);
   for (const cwd of cwds) {
-    await sync(opt.conartist, { cli: cli.flags, cwd, opt });
+    await sync(opt.conartist, {
+      cli: cli.flags,
+      cwd,
+      dry: cli.flags.dry,
+      opt
+    });
   }
 }
 
