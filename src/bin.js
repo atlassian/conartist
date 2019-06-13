@@ -1,3 +1,4 @@
+const camelcase = require("camelcase");
 const inquirer = require("inquirer");
 const map = require("lodash/map");
 const merge = require("lodash/merge");
@@ -15,7 +16,7 @@ function objectOrDescription(option, defaults) {
 
 function buildOption(name, option) {
   return [
-    `--${name}${option.alias ? `, ${option.alias}` : ""}`,
+    `--${name}${option.alias ? `, -${option.alias}` : ""}`,
     option.description,
     option.default
   ];
@@ -45,6 +46,19 @@ async function cli(opt) {
       });
 
       cli.action(args => {
+        // Camelcase all options.
+        for (const arg in args) {
+          const cc = camelcase(arg);
+          if (!(cc in args)) {
+            Object.defineProperty(args, cc, {
+              enumerable: true,
+              get() {
+                return this[arg];
+              }
+            });
+          }
+        }
+
         // Ensure we ask questions for global options if not specified.
         Object.keys(opt.options).forEach(o => {
           const option = objectOrDescription(opt.options[o]);

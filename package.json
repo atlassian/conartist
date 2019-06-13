@@ -19,6 +19,7 @@
   "version": "0.26.0",
   "bin": "./bin/index.js",
   "dependencies": {
+    "camelcase": "^5.3.1",
     "cosmiconfig": "^5.2.1",
     "fs-extra": "^8.0.1",
     "inquirer": "^6.3.1",
