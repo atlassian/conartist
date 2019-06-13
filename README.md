@@ -517,6 +517,14 @@ The available options are:
   Defaults to `"."`.
 - `dry` perform a dry run (does not modify any files, just outputs what would
   happen to them).
+- `events` an instance of an `EventEmitter` (use via the built-in module:
+  `require("events")`). Supported events are:
+  - `file, { action, file }` when a file is affected. The `file` argument is the
+    file, relative to the `cwd` and `action` is the action that was taken on the
+    file.
+  - `info, message` when `info` is logged. The `message` argument is the info
+    message.
+  - `warn, message` when `warn` is logged. The `message` is the warning.
 
 ```js
 const { sync } = require("conartist");
