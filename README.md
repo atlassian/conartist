@@ -43,9 +43,11 @@ $ conartist --help
 
   Available Commands
     default    Run the default configuration.
+    init       Creates a basic configuration file.
 
   For more info, run any command with the `--help` flag
     $ conartist default --help
+    $ conartist init --help
 
   Options
     -v, --version    Displays current version
