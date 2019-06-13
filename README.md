@@ -1,11 +1,10 @@
 # Conartist
 
-Hate managing all your different config files across all your different
-repositories?
+> Scaffold out and keep all your files in sync over time. Code-shifts for your
+> file system.
 
-> Conartist is a tool that gives you a way to manage all of your config files
-> from a single source of truth. Not only will it scaffold them out, it can also
-> keep them in sync, even if you modify them manually.
+Conartist is a tool that allows you to scaffold out and maintain your project
+configurations over time.
 
 - ✋ Keeping separate repos in sync.
 - 📦 Keeping monorepo packages in sync.
