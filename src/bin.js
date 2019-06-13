@@ -1,9 +1,11 @@
 const camelcase = require("camelcase");
+const EventEmitter = require("events");
 const inquirer = require("inquirer");
 const map = require("lodash/map");
 const merge = require("lodash/merge");
-const pickBy = require("lodash/pickBy");
 const os = require("os");
+const path = require("path");
+const pickBy = require("lodash/pickBy");
 const sade = require("sade");
 const { sync } = require("./sync");
 
@@ -137,8 +139,28 @@ const optDefault = {
 async function bin(opt) {
   opt = merge(optDefault, opt);
   const { cli, cmd } = await opt.cli(opt);
+
+  // We require at least one path to run in because it reduces confusion or fat-fingering.
+  if (!cli._.length) {
+    console.warn(
+      "Please specify at least one directory to run conartist in. For more information, see --help."
+    );
+  }
+
   for (const cwd of cli._) {
-    await sync(opt.conartist, { cli, cmd, cwd, dry: cli.dry, opt });
+    const events = new EventEmitter();
+    events.once("file", () => console.log(path.resolve(cwd)));
+    events.on("file", ({ action, file }) => console.log(`  ${action} ${file}`));
+    events.on("info", info => console.log(info, os.EOL));
+    events.on("warn", console.warn);
+    await sync(opt.conartist, {
+      cli,
+      cmd,
+      cwd,
+      dry: cli.dry,
+      events,
+      opt
+    });
   }
 }
 

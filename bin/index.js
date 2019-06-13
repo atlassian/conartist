@@ -5,15 +5,29 @@ const pkg = require("../package.json");
 const { bin } = require("../src");
 
 (async function main() {
-  const search = await cosmiconfig("conartist").search();
-  if (!search && process.argv.indexOf("--help") === -1) {
-    console.error(
-      "No conartist configuration file found. For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist."
-    );
-    process.exit(1);
-  }
+  const configs = {
+    default: async () => {
+      const search = await cosmiconfig("conartist").search();
+      if (!search) {
+        console.warn(
+          "No conartist configuration file found. For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist."
+        );
+        process.exit();
+      }
+      return search.config;
+    },
+    init: {
+      files: {
+        "conartist.config.js": "module.exports = { files: [] }"
+      }
+    }
+  };
+
   await bin({
     ...pkg,
-    conartist: search ? search.config : null
+    commands: {
+      init: "Creates a basic configuration file."
+    },
+    conartist: ({ cmd }) => configs[cmd]
   });
 })();

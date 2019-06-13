@@ -1,8 +1,8 @@
+const EventEmitter = require("events");
 const fs = require("fs-extra");
 const isArray = require("lodash/isArray");
 const isPlainObject = require("lodash/isPlainObject");
 const mergeWith = require("lodash/mergeWith");
-const os = require("os");
 const path = require("path");
 const pkgUp = require("pkg-up");
 const reduce = require("lodash/reduce");
@@ -20,8 +20,9 @@ const configDefaults = {
 };
 
 const optionDefaults = {
-  cwd: ".",
-  dry: false
+  cwd: null,
+  dry: false,
+  events: new EventEmitter()
 };
 
 // Lodash merges arrays with objects, but we need it to replace arrays
@@ -34,7 +35,15 @@ function merger(prev, curr) {
 
 async function sync(cfg, opt) {
   opt = mergeWith({}, optionDefaults, opt, merger);
-  cfg = typeof cfg === "function" ? cfg(opt) : cfg;
+
+  if (!opt.cwd) {
+    throw new Error("You must specify a cwd option.");
+  }
+
+  if (typeof cfg === "function") {
+    return await sync(await cfg(opt), opt);
+  }
+
   cfg = mergeWith({}, configDefaults, cfg, merger);
 
   // Files can be either an array of file objects or an object of
@@ -55,17 +64,18 @@ async function sync(cfg, opt) {
   // If there's no files or includes, it's not really an error but there's
   // nothing to do.
   if (!cfg.files.length && !cfg.includes.length) {
-    console.warn(
+    opt.events.emit(
+      "warn",
       'You have not provided any "files" or "includes". For more information see https://github.com/treshugart/conartist#install for ways you can configure conartist.'
     );
-    process.exit();
+    return;
   }
 
   // Ensure they know they're doing a dry run.
   if (opt.dry) {
-    console.log(
-      "A dry run is being performed. No files will be output.",
-      os.EOL
+    opt.events.emit(
+      "info",
+      "A dry run is being performed. No files will be output."
     );
   }
 
@@ -105,23 +115,24 @@ async function sync(cfg, opt) {
       ...file,
       name: path.normalize(path.join(opt.cwd, file.name))
     };
+    let action;
     const relativePath = path.relative(process.cwd(), file.name);
     if (file.remove) {
-      console.log(`D ${relativePath}`);
+      action = "D";
       if (!opt.dry) {
         await fs.remove(file.name);
       }
     } else {
       if (await fs.exists(file.name)) {
-        const action = file.overwrite ? "O" : file.merge ? "M" : "U";
-        console.log(`${action} ${relativePath}`);
+        action = file.overwrite ? "O" : file.merge ? "M" : "U";
       } else {
-        console.log(`A ${relativePath}`);
+        action = "A";
       }
       if (!opt.dry) {
         await fs.outputFile(file.name, await handler(file));
       }
     }
+    opt.events.emit("file", { action, file: relativePath });
   }
 }
 
