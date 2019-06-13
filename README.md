@@ -247,13 +247,17 @@ The available options are:
 - `conartist` the `conartist` configuration as normally specified in a config
   file. Defaults to `{}`.
 - `options` custom CLI options. Each key is the option name and each value can
-  either be a `string` and will be the description, or it allows:
+  either be a `string` and will be the description, or it allows an object that
+  may contain:
   - `alias` the option alias (i.e. `-a`).
   - `default` the default value.
   - `description` the option description.
+  - `question` an
+    [`inquirer` question object](https://github.com/SBoudrias/Inquirer.js/#question).
 - `commands` custom CLI sub-commands. Each key is the command name and each
   value can either be a `string` and will be the description, or it allows:
   - `description` the command description.
+  - `options` an object of options as described above for global options.
 
 The following example creates a `npx license-mit` command.
 
@@ -301,41 +305,6 @@ bin({
 });
 ```
 
-As seen above, the configuration is specified using an `object`. However, you
-could also specify a function returning an `object` that gets the following
-options passed in:
-
-- `cli` the arguments parsed from the CLI. This allows you to add custom options
-  and use them to generate your config.
-- `cmd` the sub-command that was run. Defaults to `"default"`.
-- `cwd` the current working directory that the config is running in.
-- `opt` the options that you originally passed in to `bin(opt)`.
-
-You could rewrite the above like so:
-
-```js
-#! /usr/bin/env node
-
-const { bin } = require("conartist");
-
-bin({
-  ...require("./package.json"),
-  conartist: ({ opt }) => ({
-    files: {
-      LICENSE: `
-        Copyright 2019 ${opt.author}
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-      `
-    }
-  })
-});
-```
-
 #### Resulting `LICENSE`
 
 ```
@@ -350,7 +319,116 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### Testing
 
-You can now test to see if your command works by running `npx .`.
+You can now test to see if your command works by running `npx .`:
+
+```sh
+$ npx .
+A LICENSE
+```
+
+#### Customize using CLI arguments
+
+In the above example, the configuration is specified using an `object`. However,
+you could also specify a function returning an `object` that gets the following
+options passed in:
+
+- `cli` the arguments parsed from the CLI. This allows you to add custom options
+  and use them to generate your config.
+- `cmd` the sub-command that was run. Defaults to `"default"`.
+- `cwd` the current working directory that the config is running in.
+- `opt` the options that you originally passed in to `bin(opt)`.
+
+If you wanted to accept a custom `author`, you could set it up as an option and
+default it to what's in the `package.json`.
+
+```js
+#! /usr/bin/env node
+
+const { bin } = require("conartist");
+const pkg = require("./package.json");
+
+bin({
+  ...pkg,
+  options: {
+    author: {
+      alias: "a",
+      default: pkg.author,
+      description: "The package author."
+    }
+  },
+  conartist: ({ cli }) => ({
+    files: {
+      LICENSE: `
+        Copyright 2019 ${cli.author}
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      `
+    }
+  })
+});
+```
+
+Now you can run:
+
+```sh
+$ npx . -a "Custom Author"
+A LICENSE
+```
+
+#### Accepting input via prompts
+
+You could take this a step further and prompt the user for input if an option
+isn't provided. It won't prompt the user for input if a `default` is provided,
+so you must remove the default from the `option`. If you want to provide a
+default for the question, then just add it as the `default` for the question, as
+seen below.
+
+```js
+#! /usr/bin/env node
+
+const { bin } = require("conartist");
+const pkg = require("./package.json");
+
+bin({
+  ...pkg,
+  options: {
+    author: {
+      alias: "a",
+      description: "The package author.",
+      question: {
+        default: pkg.author,
+        message: "What author should we use?"
+      }
+    }
+  },
+  conartist: ({ cli }) => ({
+    files: {
+      LICENSE: `
+        Copyright 2019 ${cli.author}
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      `
+    }
+  })
+});
+```
+
+Now when you run the command without the `--author` option, it will prompt you
+to fill it in.
+
+```sh
+$ npx .
+? What author should we use? Your Name <you@yourdomain.com>
+O LICENSE
+```
 
 #### Built-in features
 
