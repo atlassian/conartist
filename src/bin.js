@@ -49,6 +49,11 @@ async function cli(opt) {
         Object.keys(opt.options).forEach(o => {
           const option = objectOrDescription(opt.options[o]);
           if (option.question && !(o in args)) {
+            if (typeof option.question === "string") {
+              option.question = {
+                message: option.question
+              };
+            }
             questions.push({
               default: option.default,
               name: o,
@@ -64,6 +69,11 @@ async function cli(opt) {
 
           // Ensure we ask questions for command options if not specified.
           if (option.question && !(name in args)) {
+            if (typeof option.question === "string") {
+              option.question = {
+                message: option.question
+              };
+            }
             questions.push({
               default: option.default,
               name,
