@@ -71,14 +71,15 @@ If you put the following in a `package.json`.
 }
 ```
 
-Now run `conartist`:
+Now run `conartist` on the current working directory:
 
 ```sh
-$ conartist
-A .gitignore
-A .nvmrc
-A .travis.yml
-A src/index.js
+$ conartist .
+/path/to/cwd
+  A .gitignore
+  A .nvmrc
+  A .travis.yml
+  A src/index.js
 ```
 
 Resulting in the following file structure:
@@ -321,8 +322,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 You can now test to see if your command works by running `npx .`:
 
 ```sh
-$ npx .
-A LICENSE
+$ npx . .
+/path/to/cwd
+  A LICENSE
 ```
 
 #### Customize using CLI arguments
@@ -374,8 +376,9 @@ bin({
 Now you can run:
 
 ```sh
-$ npx . -a "Custom Author"
-A LICENSE
+$ npx . . -a "Custom Author"
+/path/to/cwd
+  A LICENSE
 ```
 
 #### Accepting input via prompts
@@ -424,9 +427,10 @@ Now when you run the command without the `--author` option, it will prompt you
 to fill it in.
 
 ```sh
-$ npx .
+$ npx . .
 ? What author should we use? Your Name <you@yourdomain.com>
-O LICENSE
+/path/to/cwd
+  O LICENSE
 ```
 
 #### Built-in features
