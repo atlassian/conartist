@@ -56,6 +56,30 @@ $ conartist --help
 
 ```
 
+### Getting started
+
+You can run:
+
+```sh
+$ conartist init .
+```
+
+It will output:
+
+```sh
+/path/to/cwd
+  A conartist.config.js
+```
+
+Which tells you that it added a `conartist.config.js` file to your current
+working directory.
+
+If you open the new `conartist.config.js` you should see something like:
+
+```js
+module.exports = { files: [] };
+```
+
 ### Simple example
 
 If you put the following in a `package.json`.
