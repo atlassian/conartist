@@ -2,41 +2,56 @@ const fs = require("fs-extra");
 const isFunction = require("lodash/isFunction");
 const merge = require("lodash/merge");
 const path = require("path");
+const prettier = require("prettier");
 const stripIndent = require("strip-indent");
 const uniq = require("lodash/uniq");
-const { formatCode, formatJson, formatMd } = require("./format");
 
-let currentHandler;
+async function getPrettierConfig(file) {
+  return await prettier.resolveConfig(file);
+}
+
+async function formatCode(file, data) {
+  return prettier.format(data, {
+    parser: "babel",
+    ...(await getPrettierConfig(file))
+  });
+}
+
+async function formatMd(file, data) {
+  return prettier.format(data, {
+    parser: "markdown",
+    ...(await getPrettierConfig(file))
+  });
+}
 
 async function readIfExists(file) {
   return (await fs.exists(file)) ? (await fs.readFile(file)).toString() : null;
 }
 
-async function handleArray(file) {
-  let data;
-  const curr = ((await readIfExists(file.name)) || "").split("\n");
-  data = file.data.concat(curr);
-  data = uniq(data);
-  return data.filter(Boolean).join("\n");
-}
-
 async function handleJs(file) {
-  const curr = (await readIfExists(file.name)) || file.data;
-  const data = file.overwrite ? file.data : curr;
-  return formatCode(data);
+  const currData = await readIfExists(file.name);
+  if (file.overwrite || !currData) {
+    return await formatCode(file.name, file.data);
+  }
+  return currData;
 }
 
 async function handleJson(file) {
-  const curr = JSON.parse(await readIfExists(file.name));
+  const currData = await readIfExists(file.name);
+  const currJson = JSON.parse(currData);
   let data;
 
-  if (curr) {
+  if (currData) {
     if (file.overwrite) {
-      data = file.merge ? merge({}, curr, file.data) : file.data;
+      if (file.merge) {
+        data = merge({}, currJson, file.data);
+      } else {
+        data = file.data;
+      }
     } else if (file.merge) {
-      data = merge({}, file.data, curr);
+      data = merge({}, file.data, currJson);
     } else {
-      data = curr;
+      return currData;
     }
   } else {
     data = file.data;
@@ -46,13 +61,19 @@ async function handleJson(file) {
 }
 
 async function handleMd(file) {
-  return formatMd(await handleString(file));
+  const currData = await readIfExists(file.name);
+  if (file.overwrite || !currData) {
+    return await formatMd(file.name, file.data);
+  }
+  return currData;
 }
 
 async function handleString(file) {
-  const curr = (await readIfExists(file.name)) || file.data;
-  const data = file.overwrite ? file.data : curr;
-  return stripIndent(data).trim();
+  const currData = await readIfExists(file.name);
+  if (file.overwrite || !currData) {
+    return stripIndent(file.data).trim();
+  }
+  return currData;
 }
 
 const mapExtname = {
