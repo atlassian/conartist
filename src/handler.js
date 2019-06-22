@@ -1,10 +1,38 @@
 const fs = require("fs-extra");
 const isFunction = require("lodash/isFunction");
-const merge = require("lodash/merge");
+const mergeWith = require("lodash/mergeWith");
 const path = require("path");
 const prettier = require("prettier");
 const stripIndent = require("strip-indent");
 const uniq = require("lodash/uniq");
+
+// Recursively maps over values and allows async functions to be used to
+// return new values. If a previousObj is provided, it uses it to retrieve
+// a value that corresponds to the same place in oldObj so you can use it
+// to return the new value.
+async function mapValues(oldObj, previousObj) {
+  previousObj = previousObj || {};
+  const newObj = Array.isArray(oldObj) ? [] : {};
+  for (const key in oldObj) {
+    newObj[key] = isFunction(oldObj[key])
+      ? await oldObj[key](key, previousObj[key], previousObj)
+      : oldObj[key];
+    if (typeof newObj[key] === "object") {
+      newObj[key] = await mapValues(newObj[key], previousObj[key]);
+    }
+  }
+  return newObj;
+}
+
+// Allows for custom merging.
+function merge(...src) {
+  return mergeWith({}, ...src, (objval, srcval, key, obj) => {
+    // Remove item if explicitly set to undefined.
+    if (typeof srcval === "undefined") {
+      delete obj[key];
+    }
+  });
+}
 
 async function getPrettierConfig(file) {
   return await prettier.resolveConfig(file);
@@ -57,6 +85,8 @@ async function handleJson(file) {
     data = file.data;
   }
 
+  data = await mapValues(data, currJson);
+
   return JSON.stringify(data, null, 2);
 }
 
@@ -88,12 +118,12 @@ const mapType = {
   object: handleJson
 };
 
+async function getData(file) {
+  return isFunction(file.data) ? await file.data(file) : file.data;
+}
+
 function getType(file) {
   let type;
-
-  if (isFunction(file.data)) {
-    return file.data;
-  }
 
   if (isFunction(file.type)) {
     return file.type;
@@ -118,7 +148,9 @@ function getType(file) {
 }
 
 async function handler(file) {
-  return await getType(file)(file);
+  file.data = await getData(file);
+  file.type = await getType(file);
+  return file.type(file);
 }
 
 module.exports = {

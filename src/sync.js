@@ -110,6 +110,8 @@ async function sync(cfg, opt) {
   // and in the same convention, files at the top level override everything
   // else before it.
   for (let file of cfg.files) {
+    // We copy file so that we can mutate it without affecting the original
+    // copy.
     file = {
       ...cfg.fileDefaults,
       ...file,
