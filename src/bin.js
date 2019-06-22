@@ -47,6 +47,12 @@ async function cli(opt) {
         default: c === "default"
       });
 
+      // Build command options.
+      Object.keys(command.options).forEach(o => {
+        const option = objectOrDescription(command.options[o]);
+        cli.option(...buildOption(o, option));
+      });
+
       cli.action(args => {
         // Camelcase all options.
         for (const arg in args) {
@@ -78,13 +84,10 @@ async function cli(opt) {
           }
         });
 
-        // Build command options.
+        // Ensure we ask questions for command options if not specified.
         Object.keys(command.options).forEach(o => {
           const option = objectOrDescription(command.options[o]);
-          cli.option(...buildOption(o, option));
-
-          // Ensure we ask questions for command options if not specified.
-          if (option.question && !(name in args)) {
+          if (option.question && !(o in args)) {
             if (typeof option.question === "string") {
               option.question = {
                 message: option.question
@@ -92,7 +95,7 @@ async function cli(opt) {
             }
             questions.push({
               default: option.default,
-              name,
+              name: o,
               ...option.question
             });
           }
