@@ -54,6 +54,7 @@ async function formatJson(file, data) {
 }
 
 async function formatMd(file, data) {
+  data = stripIndent(data);
   return prettier.format(data, {
     parser: "markdown",
     ...(await getPrettierConfig(file))

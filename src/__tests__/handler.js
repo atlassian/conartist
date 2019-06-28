@@ -23,9 +23,9 @@ const jsonObjStr = outdent`
 
 `;
 const mdData = `
-  \`\`\`js
-  <tag></tag>
-  \`\`\`
+    \`\`\`js
+    <tag></tag>
+    \`\`\`
 `;
 const mdStr = outdent`
   \`\`\`js
