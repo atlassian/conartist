@@ -12,6 +12,7 @@ const configDefaults = {
   fileDefaults: {
     merge: false,
     overwrite: false,
+    sort: false,
     remove: false
   },
   files: [],

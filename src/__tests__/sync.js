@@ -15,9 +15,8 @@ test("sync", async () => {
   await sync(require(root), { cwd: output, log: () => {} });
   expect(await read("file1")).toBe("index -> file1");
   expect(await read("file2")).toBe(outdent`
-    {
-      "test": "include1 -> file2"
-    }
+    { "test": "include1 -> file2" }
+    
   `);
   expect(await fs.exists(path.join(output, "file3"))).toBe(false);
 });

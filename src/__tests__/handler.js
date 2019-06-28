@@ -10,14 +10,17 @@ const jsStr = outdent`
 const jsxData = "<tag></tag>";
 const jsxStr = outdent`
   <tag />;
-
+  
 `;
 const jsonData = ["one", "two"];
 const jsonStr = outdent`
-  [
-    "one",
-    "two"
-  ]
+  ["one", "two"]
+
+`;
+const jsonObjData = { c: 2, a: 0, b: 1 };
+const jsonObjStr = outdent`
+  { "a": 0, "b": 1, "c": 2 }
+
 `;
 const mdData = `
   \`\`\`js
@@ -57,6 +60,16 @@ test("json (typeof)", async () => {
       data: jsonData
     })
   ).toBe(jsonStr);
+});
+
+test("json (sort)", async () => {
+  expect(
+    await handler({
+      name: "test",
+      sort: true,
+      data: jsonObjData
+    })
+  ).toBe(jsonObjStr);
 });
 
 test("js (extname)", async () => {

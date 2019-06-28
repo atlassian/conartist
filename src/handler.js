@@ -3,6 +3,7 @@ const isFunction = require("lodash/isFunction");
 const mergeWith = require("lodash/mergeWith");
 const path = require("path");
 const prettier = require("prettier");
+const sortJson = require("sort-json");
 const stripIndent = require("strip-indent");
 const uniq = require("lodash/uniq");
 
@@ -41,6 +42,13 @@ async function getPrettierConfig(file) {
 async function formatCode(file, data) {
   return prettier.format(data, {
     parser: "babel",
+    ...(await getPrettierConfig(file))
+  });
+}
+
+async function formatJson(file, data) {
+  return prettier.format(data, {
+    parser: "json",
     ...(await getPrettierConfig(file))
   });
 }
@@ -87,7 +95,12 @@ async function handleJson(file) {
 
   data = await mapValues(data, currJson);
 
-  return JSON.stringify(data, null, 2);
+  if (file.sort) {
+    data = sortJson(data);
+  }
+
+  data = JSON.stringify(data);
+  return formatJson(file.name, data);
 }
 
 async function handleMd(file) {
