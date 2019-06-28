@@ -16,7 +16,7 @@
   },
   "name": "conartist",
   "description": "Declarative project scaffolding and synchronisation.",
-  "version": "0.29.0",
+  "version": "0.29.1",
   "bin": "./bin/index.js",
   "dependencies": {
     "camelcase": "^5.3.1",
